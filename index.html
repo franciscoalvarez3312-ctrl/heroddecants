@@ -1,0 +1,3105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Herod Decants – Perfumería de Lujo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --card: #1a1a1a;
+      --border: #2a2a2a;
+      --gold: #c9a96e;
+      --gold-light: #e2c68a;
+      --gold-dim: rgba(201,169,110,0.15);
+      --text: #f0ece4;
+      --text-muted: #8a7d6e;
+      --text-sub: #b0a090;
+      --white: #ffffff;
+      --radius: 4px;
+      --transition: 0.3s ease;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    h1,h2,h3,h4 { font-family: "Playfair Display", serif; font-weight: 500; letter-spacing: 0.01em; }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+    /* ─── SCROLLBAR ─────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ─── NAVBAR ─────────────────────────── */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%;
+      height: 70px;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      transition: var(--transition);
+    }
+    .navbar-logo {
+      font-family: "Playfair Display", serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.12em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+    .navbar-logo span { color: var(--text); font-style: italic; }
+    .navbar-actions { display: flex; align-items: center; gap: 1.2rem; }
+    .nav-btn {
+      background: none; border: none; color: var(--text-sub);
+      font-size: 1.1rem; cursor: pointer;
+      transition: color var(--transition);
+      position: relative;
+    }
+    .nav-btn:hover { color: var(--gold); }
+    .cart-count {
+      position: absolute; top: -7px; right: -8px;
+      background: var(--gold); color: var(--bg);
+      font-size: 0.6rem; font-weight: 600;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: "Inter", sans-serif;
+    }
+    .nav-search-wrap {
+      position: relative; display: flex; align-items: center;
+    }
+    .nav-search {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 14px 6px 36px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      width: 0; opacity: 0;
+      transition: width 0.4s ease, opacity 0.3s ease;
+      outline: none;
+    }
+    .nav-search.open { width: 200px; opacity: 1; }
+    .nav-search::placeholder { color: var(--text-muted); }
+    .search-icon {
+      position: absolute; left: 10px;
+      color: var(--text-muted); font-size: 0.85rem; pointer-events: none;
+    }
+
+    /* ─── PROMO BANNER ───────────────────── */
+    .promo-banner {
+      background: linear-gradient(90deg, var(--gold), #a07840, var(--gold));
+      background-size: 200% 100%;
+      animation: shimmer 4s linear infinite;
+      text-align: center;
+      padding: 9px 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--bg);
+      text-transform: uppercase;
+      margin-top: 70px;
+    }
+    @keyframes shimmer { 0%{background-position:0% 50%} 100%{background-position:200% 50%} }
+
+    /* ─── HERO ───────────────────────────── */
+    .hero {
+      min-height: 92vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 80px 5% 60px;
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(ellipse at 60% 40%, rgba(201,169,110,0.07) 0%, transparent 65%),
+                  radial-gradient(ellipse at 30% 70%, rgba(120,90,50,0.06) 0%, transparent 55%),
+                  var(--bg);
+    }
+    .hero::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a96e' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .hero-eyebrow {
+      font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1.5rem; font-weight: 500;
+    }
+    .hero-title {
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+    .hero-title em { color: var(--gold); font-style: italic; }
+    .hero-sub {
+      font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+      color: var(--text-sub);
+      max-width: 520px;
+      margin: 0 auto 2.5rem;
+      font-weight: 300;
+      line-height: 1.8;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: var(--gold);
+      color: var(--bg);
+      padding: 14px 34px;
+      font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      border-radius: var(--radius);
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+    }
+    .btn-primary:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(201,169,110,0.3);
+    }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 13px 30px;
+      font-size: 0.8rem; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      border-radius: var(--radius);
+      transition: all var(--transition);
+    }
+    .btn-outline:hover { background: var(--gold-dim); transform: translateY(-1px); }
+    .hero-badges {
+      display: flex; gap: 2rem; margin-top: 4rem;
+      justify-content: center; flex-wrap: wrap;
+    }
+    .hero-badge {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.06em;
+    }
+    .hero-badge i { color: var(--gold); font-size: 0.9rem; }
+
+    /* ─── SECTIONS ───────────────────────── */
+    .section { padding: 90px 5%; }
+    .section-label {
+      font-size: 0.65rem; letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.7rem; font-weight: 500;
+    }
+    .section-title { font-size: clamp(1.8rem, 3vw, 2.6rem); margin-bottom: 1rem; }
+    .section-sub {
+      color: var(--text-sub); font-size: 0.95rem; font-weight: 300;
+      max-width: 560px; line-height: 1.8;
+    }
+    .section-header { margin-bottom: 3rem; }
+    .divider {
+      width: 40px; height: 1px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      margin: 1rem 0 1.5rem;
+    }
+
+    /* ─── DECANT INFO ────────────────────── */
+    .decant-section { background: var(--surface); }
+    .decant-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 2rem; margin-top: 3rem;
+    }
+    .decant-card {
+      padding: 2rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      text-align: center;
+      transition: border-color var(--transition), transform var(--transition);
+      background: var(--card);
+    }
+    .decant-card:hover { border-color: var(--gold); transform: translateY(-4px); }
+    .decant-icon {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--gold-dim);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.2rem;
+      font-size: 1.3rem; color: var(--gold);
+    }
+    .decant-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .decant-card p { font-size: 0.82rem; color: var(--text-sub); line-height: 1.7; }
+
+    /* ─── CATALOG ────────────────────────── */
+    .catalog-controls {
+      display: flex; flex-wrap: wrap; align-items: center;
+      gap: 1rem; margin-bottom: 2.5rem;
+    }
+    .filter-tabs {
+      display: flex; flex-wrap: wrap; gap: 0.5rem; flex: 1;
+    }
+    .filter-tab {
+      padding: 7px 18px;
+      font-size: 0.75rem; letter-spacing: 0.08em;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition);
+      background: none;
+      text-transform: uppercase; font-weight: 500;
+    }
+    .filter-tab:hover, .filter-tab.active {
+      border-color: var(--gold); color: var(--gold);
+      background: var(--gold-dim);
+    }
+    .catalog-search {
+      position: relative;
+    }
+    .catalog-search input {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 14px 8px 36px;
+      border-radius: 20px;
+      font-size: 0.8rem; width: 200px;
+      outline: none;
+      transition: border-color var(--transition);
+    }
+    .catalog-search input:focus { border-color: var(--gold); }
+    .catalog-search input::placeholder { color: var(--text-muted); }
+    .catalog-search i {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      color: var(--text-muted); font-size: 0.8rem;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* ─── PRODUCT CARD ───────────────────── */
+    .product-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+      position: relative;
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(201,169,110,0.4);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+    }
+    .product-img-wrap {
+      position: relative; overflow: hidden;
+      padding-top: 100%;
+      background: linear-gradient(135deg, #1e1a14, #2a2218);
+    }
+    .product-img-inner {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 4rem;
+      transition: transform 0.5s ease;
+    }
+    .product-card:hover .product-img-inner { transform: scale(1.08); }
+    .product-badge {
+      position: absolute; top: 12px; left: 12px;
+      background: var(--gold);
+      color: var(--bg);
+      font-size: 0.6rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 3px 9px; border-radius: 2px;
+    }
+    .product-info { padding: 1.2rem; }
+    .product-brand {
+      font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.3rem; font-weight: 500;
+    }
+    .product-name { font-size: 1.05rem; margin-bottom: 0.3rem; color: var(--text); }
+    .product-family { display:none !important; /* removed */ } .product-family-HIDDEN {
+      font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.9rem;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .product-family i { font-size: 0.65rem; color: var(--gold); }
+    .product-prices {
+      display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;
+    }
+    .price-chip {
+      font-size: 0.7rem; color: var(--text-sub);
+      border: 1px solid var(--border);
+      padding: 3px 9px; border-radius: 3px;
+    }
+    .price-chip span { color: var(--gold); font-weight: 600; }
+    .btn-add-quick {
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 9px;
+      font-size: 0.75rem; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      border-radius: var(--radius);
+      transition: all var(--transition);
+    }
+    .btn-add-quick:hover { background: var(--gold); color: var(--bg); }
+
+    /* ─── PROMOTIONS ─────────────────────── */
+    .promos-section { background: var(--surface); }
+    .promos-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .promo-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      background: var(--card);
+      position: relative; overflow: hidden;
+      transition: border-color var(--transition);
+    }
+    .promo-card:hover { border-color: var(--gold); }
+    .promo-card::before {
+      content: "";
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .promo-label {
+      font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--gold); font-weight: 600; margin-bottom: 0.8rem;
+    }
+    .promo-title { font-size: 1.6rem; color: var(--text); margin-bottom: 0.5rem; }
+    .promo-desc { font-size: 0.82rem; color: var(--text-sub); line-height: 1.7; }
+    .promo-code {
+      display: inline-block; margin-top: 1rem;
+      background: var(--gold-dim);
+      border: 1px dashed var(--gold);
+      color: var(--gold);
+      padding: 5px 14px;
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.15em; border-radius: 3px;
+    }
+
+    /* ─── SHIPPING ───────────────────────── */
+    .shipping-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 3rem; align-items: start;
+    }
+    .shipping-table {
+      width: 100%; border-collapse: collapse; margin-top: 1.5rem;
+    }
+    .shipping-table th {
+      text-align: left; padding: 10px 14px;
+      font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--gold); font-weight: 600;
+      border-bottom: 1px solid var(--border);
+    }
+    .shipping-table td {
+      padding: 12px 14px;
+      font-size: 0.82rem; color: var(--text-sub);
+      border-bottom: 1px solid rgba(42,42,42,0.5);
+    }
+    .shipping-table tr:hover td { color: var(--text); }
+    .free-tag {
+      background: var(--gold-dim);
+      color: var(--gold);
+      font-size: 0.65rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 2px 8px; border-radius: 2px;
+    }
+    .shipping-features { list-style: none; margin-top: 1.5rem; }
+    .shipping-features li {
+      display: flex; align-items: flex-start; gap: 0.8rem;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid rgba(42,42,42,0.5);
+      font-size: 0.85rem; color: var(--text-sub);
+    }
+    .shipping-features li i { color: var(--gold); margin-top: 2px; font-size: 0.9rem; }
+
+    /* ─── FOOTER ─────────────────────────── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 60px 5% 30px;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem; margin-bottom: 3rem;
+    }
+    .footer-brand h3 {
+      font-size: 1.3rem; color: var(--gold);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+    .footer-brand p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.8; max-width: 260px; }
+    .footer-socials { display: flex; gap: 0.8rem; margin-top: 1.5rem; }
+    .social-btn {
+      width: 36px; height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 0.85rem;
+      transition: all var(--transition);
+    }
+    .social-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .footer-col h4 {
+      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text-sub); margin-bottom: 1.2rem; font-family: "Inter", sans-serif;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 0.6rem; }
+    .footer-col ul li a { font-size: 0.82rem; color: var(--text-muted); transition: color var(--transition); }
+    .footer-col ul li a:hover { color: var(--gold); }
+    .footer-payments { display: flex; align-items: center; gap: 0.8rem; margin-top: 1rem; flex-wrap: wrap; }
+    .payment-badge {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 0.72rem; font-weight: 600;
+      color: var(--text-sub);
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .payment-badge i { font-size: 1rem; }
+    .paypal-color { color: #009cde; }
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+      font-size: 0.75rem; color: var(--text-muted);
+    }
+    .footer-bottom-links { display: flex; gap: 1.5rem; }
+    .footer-bottom-links a { color: var(--text-muted); transition: color var(--transition); }
+    .footer-bottom-links a:hover { color: var(--gold); }
+
+    /* ─── CART DRAWER ────────────────────── */
+    .overlay {
+      position: fixed; inset: 0; z-index: 1100;
+      background: rgba(0,0,0,0.7);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+      backdrop-filter: blur(2px);
+    }
+    .overlay.open { opacity: 1; pointer-events: auto; }
+    .cart-drawer {
+      position: fixed; top: 0; right: 0; bottom: 0; z-index: 1200;
+      width: min(420px, 95vw);
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+    .cart-drawer.open { transform: translateX(0); }
+    .cart-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .cart-header h2 { font-size: 1.2rem; }
+    .cart-close {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 0.9rem;
+      transition: all var(--transition);
+    }
+    .cart-close:hover { border-color: var(--gold); color: var(--gold); }
+    .cart-body { flex: 1; overflow-y: auto; padding: 1.5rem; }
+    .cart-empty {
+      text-align: center; padding: 4rem 0;
+      color: var(--text-muted);
+    }
+    .cart-empty i { font-size: 3rem; margin-bottom: 1rem; color: var(--border); }
+    .cart-empty p { font-size: 0.9rem; }
+    .cart-item {
+      display: flex; gap: 1rem; padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .cart-item-img {
+      width: 60px; height: 60px;
+      background: var(--card); border-radius: var(--radius);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+    .cart-item-info { flex: 1; }
+    .cart-item-brand { font-size: 0.62rem; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; }
+    .cart-item-name { font-size: 0.88rem; color: var(--text); margin: 2px 0; font-family: "Playfair Display", serif; }
+    .cart-item-size { font-size: 0.72rem; color: var(--text-muted); }
+    .cart-item-actions {
+      display: flex; align-items: center; justify-content: space-between; margin-top: 0.6rem;
+    }
+    .qty-ctrl { display: flex; align-items: center; gap: 0.6rem; }
+    .qty-btn {
+      width: 26px; height: 26px; border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-sub); font-size: 0.8rem;
+      transition: all var(--transition);
+    }
+    .qty-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .qty-num { font-size: 0.85rem; min-width: 20px; text-align: center; }
+    .cart-item-price { font-size: 0.9rem; color: var(--gold); font-weight: 500; }
+    .cart-remove {
+      color: var(--text-muted); font-size: 0.8rem;
+      transition: color var(--transition);
+    }
+    .cart-remove:hover { color: #e55; }
+    .cart-footer { padding: 1.5rem; border-top: 1px solid var(--border); }
+    .free-shipping-bar { margin-bottom: 1.2rem; }
+    .free-shipping-msg { font-size: 0.76rem; color: var(--text-sub); margin-bottom: 0.5rem; }
+    .free-shipping-msg .highlight { color: var(--gold); font-weight: 600; }
+    .progress-bar {
+      height: 3px; background: var(--border); border-radius: 2px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius: 2px;
+      transition: width 0.5s ease;
+    }
+    .cart-totals { margin-bottom: 1.2rem; }
+    .cart-row {
+      display: flex; justify-content: space-between;
+      font-size: 0.82rem; color: var(--text-sub);
+      padding: 0.3rem 0;
+    }
+    .cart-row.total {
+      font-size: 1rem; color: var(--text); font-weight: 600;
+      border-top: 1px solid var(--border); margin-top: 0.5rem; padding-top: 0.8rem;
+    }
+    .cart-row.total span:last-child { color: var(--gold); }
+    .btn-paypal {
+      width: 100%;
+      background: #0070ba;
+      color: white; border: none;
+      padding: 14px;
+      border-radius: var(--radius);
+      font-size: 0.85rem; font-weight: 600;
+      letter-spacing: 0.05em;
+      display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+      transition: background var(--transition), transform var(--transition);
+      margin-bottom: 0.8rem;
+    }
+    .btn-paypal:hover { background: #005ea6; transform: translateY(-1px); }
+    .btn-paypal .pp-logo { font-size: 1.1rem; }
+    .secure-note {
+      text-align: center; font-size: 0.7rem; color: var(--text-muted);
+      display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+    }
+
+    /* ─── PRODUCT MODAL ──────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 1300;
+      background: rgba(0,0,0,0.85);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      width: min(820px, 100%);
+      max-height: 90vh; overflow-y: auto;
+      transform: scale(0.95) translateY(20px);
+      transition: transform 0.3s ease;
+    }
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+    .modal-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+    }
+    .modal-img {
+      padding: 3rem;
+      background: linear-gradient(135deg, #1a1510, #221c12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 7rem;
+      min-height: 300px;
+    }
+    .modal-content { padding: 2.5rem; }
+    .modal-brand { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); }
+    .modal-name { font-size: 1.8rem; margin: 0.4rem 0 0.3rem; }
+    .modal-family { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1.2rem; }
+    .modal-desc { font-size: 0.85rem; color: var(--text-sub); line-height: 1.8; margin-bottom: 1.5rem; }
+    .notes-section { margin-bottom: 1.5rem; }
+    .notes-title { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.7rem; }
+    .notes-grid { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .note-group { flex: 1; min-width: 80px; }
+    .note-label { font-size: 0.6rem; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.3rem; }
+    .note-items { font-size: 0.75rem; color: var(--text-sub); line-height: 1.6; }
+    .size-selector { margin-bottom: 1.5rem; }
+    .size-label { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.7rem; }
+    .size-options { display: flex; gap: 0.7rem; }
+    .size-opt {
+      flex: 1; padding: 10px 6px; text-align: center;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      cursor: pointer; transition: all var(--transition);
+    }
+    .size-opt:hover, .size-opt.active { border-color: var(--gold); background: var(--gold-dim); }
+    .size-ml { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+    .size-price { font-size: 0.78rem; color: var(--gold); margin-top: 2px; }
+    .modal-close-btn {
+      position: absolute; top: 1rem; right: 1rem;
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); transition: all var(--transition);
+    }
+    .modal-close-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .modal-wrap { position: relative; }
+
+    /* ─── WHATSAPP FLOAT ─────────────────── */
+    .wa-btn {
+      position: fixed; bottom: 28px; right: 28px; z-index: 900;
+      width: 56px; height: 56px; border-radius: 50%;
+      background: #25d366;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; color: white;
+      box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .wa-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 30px rgba(37,211,102,0.5);
+    }
+    .wa-tooltip {
+      position: absolute; right: 68px; top: 50%; transform: translateY(-50%);
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 6px 12px; border-radius: 3px;
+      font-size: 0.75rem; white-space: nowrap; color: var(--text);
+      opacity: 0; pointer-events: none;
+      transition: opacity var(--transition);
+    }
+    .wa-btn:hover .wa-tooltip { opacity: 1; }
+
+    /* ─── TOAST ──────────────────────────── */
+    .toast {
+      position: fixed; bottom: 100px; right: 28px; z-index: 2000;
+      background: var(--surface);
+      border: 1px solid var(--gold);
+      border-left: 3px solid var(--gold);
+      padding: 12px 18px;
+      border-radius: var(--radius);
+      font-size: 0.82rem; color: var(--text);
+      display: flex; align-items: center; gap: 0.6rem;
+      transform: translateX(120%);
+      transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+    .toast.show { transform: translateX(0); }
+    .toast i { color: var(--gold); }
+
+    /* ─── RESPONSIVE ─────────────────────── */
+    @media (max-width: 768px) {
+      .navbar { padding: 0 4%; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .modal-inner { grid-template-columns: 1fr; }
+      .modal-img { min-height: 200px; font-size: 5rem; padding: 2rem; }
+      .shipping-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .footer-grid { grid-template-columns: 1fr; }
+      .products-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+    }
+
+    /* ─── NO RESULTS ─────────────────────── */
+    .no-results {
+      grid-column: 1/-1; text-align: center;
+      padding: 4rem; color: var(--text-muted);
+    }
+    .no-results i { font-size: 2.5rem; margin-bottom: 1rem; color: var(--border); }
+  
+    /* ─── PRODUCT IMAGE SUPPORT ──────────────── */
+    .product-img-inner img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      position: absolute; inset: 0;
+      border-radius: 0;
+    }
+    .product-img-inner.has-photo { font-size: 0; }
+    .modal-img img {
+      max-width: 100%; max-height: 100%;
+      object-fit: contain; border-radius: var(--radius);
+    }
+    .modal-img.has-photo { font-size: 0; background: #111; }
+
+    /* ─── POPULAR SLIDER ─────────────────────── */
+    .popular-section { background: var(--bg); overflow: hidden; }
+    .slider-outer {
+      position: relative;
+    }
+    .slider-track-wrap {
+      overflow-x: auto;
+      overflow-y: visible;
+      cursor: grab;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 8px;
+    }
+    .slider-track-wrap::-webkit-scrollbar { display: none; }
+    .slider-track-wrap.grabbing { cursor: grabbing; }
+    .slider-track {
+      display: flex;
+      gap: 1.2rem;
+      padding: 1rem 0 1.5rem;
+      width: max-content;
+    }
+    .slider-card {
+      width: 240px;
+      flex-shrink: 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+    }
+    .slider-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(201,169,110,0.45);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.45);
+    }
+    .slider-img {
+      height: 220px;
+      background: linear-gradient(135deg, #1e1a14, #2a2218);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 5rem;
+      position: relative;
+      overflow: hidden;
+      transition: font-size 0.3s;
+    }
+    .slider-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      position: absolute; inset: 0;
+    }
+    .slider-img.has-photo { font-size: 0; }
+    .slider-rank {
+      position: absolute; top: 10px; left: 10px;
+      background: rgba(10,10,10,0.75);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 3px 9px; border-radius: 2px;
+      backdrop-filter: blur(4px);
+    }
+    .slider-info { padding: 1rem 1.1rem; }
+    .slider-brand { font-size: 0.6rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.25rem; }
+    .slider-name { font-family: "Playfair Display", serif; font-size: 0.95rem; color: var(--text); margin-bottom: 0.5rem; line-height: 1.3; }
+    .slider-price { font-size: 0.75rem; color: var(--text-muted); }
+    .slider-price span { color: var(--gold); font-weight: 600; }
+    .slider-arrows {
+      display: flex; gap: 0.6rem;
+      position: absolute; top: -52px; right: 0;
+    }
+    .slider-arrow {
+      width: 38px; height: 38px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 0.85rem;
+      transition: all var(--transition);
+      background: var(--surface);
+    }
+    .slider-arrow:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ─── PHOTO UPLOAD HINT ──────────────────── */
+    .photo-hint {
+      position: absolute; bottom: 8px; right: 8px;
+      background: rgba(0,0,0,0.7);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.6rem; padding: 3px 8px;
+      border-radius: 2px; letter-spacing: 0.05em;
+      pointer-events: none;
+    }
+
+  
+    /* ─── ADMIN PANEL ────────────────────────── */
+    .admin-toggle {
+      position: fixed; bottom: 28px; left: 28px; z-index: 900;
+      display: flex; align-items: center; gap: 0.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 10px 16px;
+      border-radius: 30px;
+      font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      transition: all var(--transition);
+      cursor: pointer;
+    }
+    .admin-toggle:hover { border-color: var(--gold); color: var(--gold); }
+    .admin-toggle i { font-size: 0.85rem; }
+
+    .admin-overlay {
+      position: fixed; inset: 0; z-index: 1400;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .admin-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .admin-panel {
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 1500;
+      width: min(560px, 96vw);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      transform: translateX(-100%);
+      transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+      overflow: hidden;
+    }
+    .admin-panel.open { transform: translateX(0); }
+
+    .admin-header {
+      padding: 1.4rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .admin-header h2 { font-size: 1.1rem; }
+    .admin-header-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+    .admin-close {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 0.9rem;
+      transition: all var(--transition); cursor: pointer;
+    }
+    .admin-close:hover { border-color: var(--gold); color: var(--gold); }
+
+    .admin-tabs {
+      display: flex; border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .admin-tab {
+      flex: 1; padding: 12px;
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; text-align: center;
+      color: var(--text-muted); cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all var(--transition);
+    }
+    .admin-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+    .admin-body {
+      flex: 1; overflow-y: auto; padding: 1.5rem;
+    }
+
+    /* Perfume list in admin */
+    .admin-perfume-list { display: flex; flex-direction: column; gap: 0.8rem; }
+    .admin-perfume-item {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0.9rem 1rem;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: border-color var(--transition);
+    }
+    .admin-perfume-item:hover { border-color: rgba(201,169,110,0.3); }
+    .admin-item-emoji {
+      width: 44px; height: 44px; flex-shrink: 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: linear-gradient(135deg, #1e1a14, #2a2218);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; position: relative;
+    }
+    .admin-item-emoji img {
+      width: 100%; height: 100%; object-fit: cover;
+      position: absolute; inset: 0;
+    }
+    .admin-item-info { flex: 1; min-width: 0; }
+    .admin-item-brand { font-size: 0.6rem; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; }
+    .admin-item-name { font-size: 0.85rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .admin-item-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+    .admin-btn-sm {
+      padding: 5px 12px;
+      font-size: 0.68rem; font-weight: 500; letter-spacing: 0.06em;
+      border-radius: 3px; cursor: pointer;
+      transition: all var(--transition);
+    }
+    .admin-btn-edit {
+      border: 1px solid var(--border); color: var(--text-muted); background: none;
+    }
+    .admin-btn-edit:hover { border-color: var(--gold); color: var(--gold); }
+    .admin-btn-del {
+      border: 1px solid rgba(220,60,60,0.3); color: rgba(220,60,60,0.7); background: none;
+    }
+    .admin-btn-del:hover { border-color: #e55; color: #e55; background: rgba(220,60,60,0.08); }
+    .admin-popular-toggle {
+      width: 32px; height: 18px; border-radius: 9px;
+      background: var(--border); cursor: pointer;
+      position: relative; transition: background 0.3s; flex-shrink: 0;
+      border: none;
+    }
+    .admin-popular-toggle.on { background: var(--gold); }
+    .admin-popular-toggle::after {
+      content: "";
+      position: absolute; top: 2px; left: 2px;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: white;
+      transition: left 0.3s;
+    }
+    .admin-popular-toggle.on::after { left: 16px; }
+
+    /* Form styles */
+    .admin-form { display: flex; flex-direction: column; gap: 1.1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+    .form-label {
+      font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--text-muted); font-weight: 500;
+    }
+    .form-input, .form-select, .form-textarea {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: var(--radius);
+      font-size: 0.82rem; font-family: "Inter", sans-serif;
+      outline: none;
+      transition: border-color var(--transition);
+      width: 100%;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--gold); }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); }
+    .form-textarea { resize: vertical; min-height: 80px; }
+    .form-select option { background: var(--card); }
+    .price-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; }
+    .price-input-wrap { display: flex; flex-direction: column; gap: 0.3rem; }
+    .price-chip-label { font-size: 0.6rem; color: var(--gold); letter-spacing: 0.1em; }
+
+    /* Photo upload */
+    .photo-upload-area {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color var(--transition), background var(--transition);
+      position: relative;
+    }
+    .photo-upload-area:hover { border-color: var(--gold); background: var(--gold-dim); }
+    .photo-upload-area input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .photo-upload-icon { font-size: 1.8rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+    .photo-upload-text { font-size: 0.78rem; color: var(--text-muted); }
+    .photo-upload-text span { color: var(--gold); }
+    .photo-preview {
+      width: 80px; height: 80px; border-radius: var(--radius);
+      object-fit: cover; border: 1px solid var(--border);
+      display: none; margin: 0.5rem auto 0;
+    }
+    .photo-url-divider {
+      display: flex; align-items: center; gap: 0.8rem;
+      font-size: 0.7rem; color: var(--text-muted); margin: 0.3rem 0;
+    }
+    .photo-url-divider::before, .photo-url-divider::after {
+      content: ""; flex: 1; height: 1px; background: var(--border);
+    }
+
+    .btn-save-perfume {
+      width: 100%;
+      background: var(--gold); color: var(--bg);
+      padding: 12px;
+      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; border-radius: var(--radius);
+      transition: background var(--transition), transform var(--transition);
+      border: none; cursor: pointer; margin-top: 0.5rem;
+    }
+    .btn-save-perfume:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .btn-cancel-form {
+      width: 100%;
+      background: none; color: var(--text-muted);
+      padding: 10px;
+      font-size: 0.78rem; letter-spacing: 0.08em;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      transition: all var(--transition); cursor: pointer;
+    }
+    .btn-cancel-form:hover { border-color: var(--text-muted); color: var(--text); }
+
+    /* Settings tab */
+    .settings-group { margin-bottom: 2rem; }
+    .settings-group-title {
+      font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1rem; font-weight: 500;
+    }
+    .settings-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.9rem 0; border-bottom: 1px solid rgba(42,42,42,0.5);
+    }
+    .settings-row-info h4 { font-size: 0.85rem; color: var(--text); font-family: "Inter", sans-serif; }
+    .settings-row-info p { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+    .admin-export-btn {
+      padding: 8px 18px;
+      border: 1px solid var(--gold); color: var(--gold);
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.08em;
+      border-radius: 3px; background: none; cursor: pointer;
+      transition: all var(--transition);
+    }
+    .admin-export-btn:hover { background: var(--gold-dim); }
+
+  
+    /* ─── REGISTER MODAL ─────────────────────── */
+    .register-modal-overlay {
+      position: fixed; inset: 0; z-index: 2100;
+      background: rgba(0,0,0,0.88);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .register-modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .register-modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      width: min(420px, 100%);
+      padding: 2.5rem;
+      position: relative;
+      transform: scale(0.95) translateY(20px);
+      transition: transform 0.4s ease;
+      text-align: center;
+    }
+    .register-modal-overlay.open .register-modal { transform: scale(1) translateY(0); }
+    .register-modal::before {
+      content: "";
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .register-icon {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: var(--gold-dim); border: 1px solid rgba(201,169,110,0.3);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.2rem;
+      font-size: 1.4rem; color: var(--gold);
+    }
+    .register-modal h2 { font-size: 1.4rem; margin-bottom: 0.5rem; }
+    .register-modal .reg-sub {
+      font-size: 0.82rem; color: var(--text-sub); margin-bottom: 0.5rem; line-height: 1.7;
+    }
+    .reg-discount-badge {
+      display: inline-block;
+      background: var(--gold-dim); border: 1px dashed var(--gold);
+      color: var(--gold); font-size: 1rem; font-weight: 700;
+      letter-spacing: 0.1em; padding: 6px 20px;
+      border-radius: 3px; margin: 0.8rem 0 1.5rem;
+    }
+    .reg-form { display: flex; flex-direction: column; gap: 0.8rem; text-align: left; }
+    .reg-input {
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--text); padding: 11px 14px;
+      border-radius: var(--radius); font-size: 0.85rem;
+      font-family: "Inter", sans-serif; outline: none; width: 100%;
+      transition: border-color var(--transition);
+      box-sizing: border-box;
+    }
+    .reg-input:focus { border-color: var(--gold); }
+    .reg-input::placeholder { color: var(--text-muted); }
+    .btn-register {
+      width: 100%; background: var(--gold); color: var(--bg);
+      padding: 13px; border: none; border-radius: var(--radius);
+      font-size: 0.82rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; cursor: pointer; margin-top: 0.3rem;
+      font-family: "Inter", sans-serif;
+      transition: background var(--transition), transform var(--transition);
+    }
+    .btn-register:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .btn-register:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .reg-skip {
+      display: block; margin-top: 0.8rem;
+      font-size: 0.75rem; color: var(--text-muted);
+      cursor: pointer; transition: color var(--transition);
+      background: none; border: none; width: 100%; text-align: center;
+      font-family: "Inter", sans-serif;
+    }
+    .reg-skip:hover { color: var(--text); }
+    .reg-success { display: none; }
+    .reg-success-icon {
+      font-size: 3rem; margin-bottom: 1rem;
+    }
+    .reg-success h3 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+    .reg-success p { font-size: 0.82rem; color: var(--text-sub); line-height: 1.7; }
+    .reg-code-display {
+      background: var(--gold-dim); border: 2px dashed var(--gold);
+      color: var(--gold); font-size: 1.4rem; font-weight: 700;
+      letter-spacing: 0.2em; padding: 12px 24px;
+      border-radius: var(--radius); margin: 1rem 0;
+      cursor: pointer; transition: background var(--transition);
+    }
+    .reg-code-display:hover { background: rgba(201,169,110,0.25); }
+    .reg-note { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.5rem; }
+    .reg-error {
+      font-size: 0.75rem; color: #e55; display: none;
+      padding: 8px 12px; background: rgba(220,60,60,0.08);
+      border: 1px solid rgba(220,60,60,0.2); border-radius: 3px;
+    }
+
+  
+    /* ─── CATEGORY QUICK ACCESS ──────────────── */
+    .category-access {
+      padding: 2rem 5% 0;
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      justify-content: center;
+    }
+    .cat-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      padding: 1.2rem 2rem;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); cursor: pointer;
+      transition: all var(--transition); min-width: 130px;
+    }
+    .cat-btn:hover, .cat-btn.active {
+      border-color: var(--gold); background: var(--gold-dim);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+    .cat-btn-icon {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--gold-dim); border: 1px solid rgba(201,169,110,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; transition: background var(--transition);
+    }
+    .cat-btn.active .cat-btn-icon, .cat-btn:hover .cat-btn-icon {
+      background: rgba(201,169,110,0.25);
+    }
+    .cat-btn-label {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--text-sub);
+      transition: color var(--transition);
+    }
+    .cat-btn:hover .cat-btn-label, .cat-btn.active .cat-btn-label { color: var(--gold); }
+    .cat-btn-count {
+      font-size: 0.65rem; color: var(--text-muted);
+    }
+    /* tipo badge on product card */
+    .tipo-badge {
+      position: absolute; bottom: 10px; right: 10px;
+      font-size: 0.58rem; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 2px 8px; border-radius: 2px;
+    }
+    .tipo-disenador { background: rgba(100,150,255,0.15); color: #7ab0ff; border: 1px solid rgba(100,150,255,0.2); }
+    .tipo-nicho     { background: rgba(201,169,110,0.15); color: var(--gold); border: 1px solid rgba(201,169,110,0.2); }
+    .tipo-arabe     { background: rgba(180,100,200,0.15); color: #c87de0; border: 1px solid rgba(180,100,200,0.2); }
+
+  
+    /* ─── PAGINATION ─────────────────────────────── */
+    .pagination {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.5rem; margin-top: 3rem; flex-wrap: wrap;
+    }
+    .page-btn {
+      min-width: 38px; height: 38px; padding: 0 10px;
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--text-sub); border-radius: var(--radius);
+      cursor: pointer; font-size: 0.8rem;
+      font-family: "Inter", sans-serif;
+      transition: all var(--transition);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .page-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .page-btn.active { background: var(--gold); color: var(--bg); border-color: var(--gold); font-weight: 700; }
+    .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .page-info { font-size: 0.75rem; color: var(--text-muted); padding: 0 0.5rem; }
+
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="#" class="navbar-logo">HEROD <span>Decants</span></a>
+  <div class="navbar-actions">
+    <div class="nav-search-wrap">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" class="nav-search" id="navSearch" placeholder="Buscar perfume..." />
+    </div>
+    <button class="nav-btn" id="searchToggle"><i class="fas fa-search"></i></button>
+    <button class="nav-btn" id="cartToggle">
+      <i class="fas fa-shopping-bag"></i>
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- PROMO BANNER -->
+<div class="promo-banner">
+  ✦ &nbsp;10% OFF en tu primera compra ✦ &nbsp;Envío gratis en pedidos mayores a $1,499 MXN&nbsp; ✦
+</div>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <p class="hero-eyebrow">✦ &nbsp;Perfumería de nicho·diseñador·arabe &nbsp; ✦</p>
+  <h1 class="hero-title">El arte de la<br/><em>esencia pura</em></h1>
+  <p class="hero-sub">Descubre los perfumes más icónicos del mundo en pequeñas muestras cuidadosamente extraídas. Sin compromiso, con todo el lujo.</p>
+  <a href="#catalogo" class="btn-primary">
+    <i class="fas fa-compass"></i> Explorar colección
+  </a>
+  <div class="hero-badges">
+    <div class="hero-badge"><i class="fas fa-flask"></i> Decants originales</div>
+    <div class="hero-badge"><i class="fas fa-shield-alt"></i> 100% auténticos</div>
+    <div class="hero-badge"><i class="fas fa-truck"></i> Envíos a toda la república</div>
+    <div class="hero-badge"><i class="fas fa-star"></i> +200 referencias</div>
+  </div>
+</section>
+
+<!-- WHAT IS A DECANT -->
+<section class="section decant-section" id="decants">
+  <div class="section-header">
+    <p class="section-label">Conócenos</p>
+    <h2 class="section-title">¿Qué es un decant?</h2>
+    <div class="divider"></div>
+    <p class="section-sub">Un decant es una muestra de perfume extraída directamente del frasco original, envasada en un atomizador pequeño y seguro. Ideal para probar antes de invertir en el frasco completo.</p>
+  </div>
+  <div class="decant-grid">
+    <div class="decant-card">
+      <div class="decant-icon"><i class="fas fa-flask"></i></div>
+      <h3>100% Original</h3>
+      <p>Extraído directamente del frasco oficial. Lo que ves en la etiqueta es exactamente lo que recibes, sin diluciones ni mezclas.</p>
+    </div>
+    <div class="decant-card">
+      <div class="decant-icon"><i class="fas fa-hand-holding-heart"></i></div>
+      <h3>Prueba sin riesgo</h3>
+      <p>¿Dudas antes de invertir $3,000 en un perfume? Pruébalo en 2 ml primero. Tu cartera te lo agradecerá.</p>
+    </div>
+    <div class="decant-card">
+      <div class="decant-icon"><i class="fas fa-box-open"></i></div>
+      <h3>Empaque seguro</h3>
+      <p>Cada decant es sellado, etiquetado con nombre y marca, y empacado con protección para evitar derrames en el envío.</p>
+    </div>
+    <div class="decant-card">
+      <div class="decant-icon"><i class="fas fa-vials"></i></div>
+      <h3>3 tamaños</h3>
+      <p>Elige entre 2 ml para una prueba rápida, 5 ml para uso regular, o 10 ml para que te dure semanas.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- POPULAR -->
+<section class="section popular-section" id="populares">
+  <div class="section-header" style="position:relative">
+    <p class="section-label">Lo más pedido</p>
+    <h2 class="section-title">Más populares</h2>
+    <div class="divider"></div>
+    <p class="section-sub">Las fragancias favoritas de nuestra comunidad. Las más solicitadas, las más elogiadas.</p>
+    <div class="slider-arrows">
+      <button class="slider-arrow" id="sliderLeft"><i class="fas fa-chevron-left"></i></button>
+      <button class="slider-arrow" id="sliderRight"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+  <div class="slider-outer">
+    <div class="slider-track-wrap" id="sliderWrap">
+      <div class="slider-track" id="sliderTrack"></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- CATEGORY QUICK ACCESS -->
+<div class="category-access" id="categoryAccess">
+  <button class="cat-btn active" data-tipo="todos">
+    <div class="cat-btn-icon">🌐</div>
+    <div class="cat-btn-label">Todos</div>
+    <div class="cat-btn-count" id="count-todos"></div>
+  </button>
+  <button class="cat-btn" data-tipo="diseñador">
+    <div class="cat-btn-icon">🏛️</div>
+    <div class="cat-btn-label">Diseñador</div>
+    <div class="cat-btn-count" id="count-disenador"></div>
+  </button>
+  <button class="cat-btn" data-tipo="nicho">
+    <div class="cat-btn-icon">💎</div>
+    <div class="cat-btn-label">Nicho</div>
+    <div class="cat-btn-count" id="count-nicho"></div>
+  </button>
+  <button class="cat-btn" data-tipo="árabe">
+    <div class="cat-btn-icon">🕌</div>
+    <div class="cat-btn-label">Árabe</div>
+    <div class="cat-btn-count" id="count-arabe"></div>
+  </button>
+</div>
+
+<!-- CATALOG -->
+<section class="section" id="catalogo">
+  <div class="section-header">
+    <p class="section-label">Nuestra colección</p>
+    <h2 class="section-title">Catálogo de perfumes</h2>
+    <div class="divider"></div>
+  </div>
+  <div class="catalog-controls">
+    <div class="filter-tabs" id="filterTabs"></div>
+    <div class="catalog-search">
+      <i class="fas fa-search"></i>
+      <input type="text" id="catalogSearch" placeholder="Buscar..." />
+    </div>
+  </div>
+  <div class="products-grid" id="productsGrid"></div>
+  <div class="pagination" id="paginationBar"></div>
+</section>
+
+<!-- PROMOTIONS -->
+<section class="section promos-section" id="promociones">
+  <div class="section-header">
+    <p class="section-label">Ofertas especiales</p>
+    <h2 class="section-title">Promociones vigentes</h2>
+    <div class="divider"></div>
+  </div>
+  <div class="promos-grid">
+    <div class="promo-card">
+      <div class="promo-label">✦ Bienvenida</div>
+      <div class="promo-title">10% OFF</div>
+      <p class="promo-desc">En tu primera compra. Regístrate con tu correo o escríbenos por WhatsApp y te enviamos tu código exclusivo de bienvenida.</p>
+      <div style="display:flex;gap:0.7rem;margin-top:1.2rem;flex-wrap:wrap">
+        <button class="btn-primary" style="flex:1;justify-content:center;padding:10px 14px;font-size:0.72rem" id="promoRegisterBtn">
+          <i class="fas fa-envelope"></i> Registrarme
+        </button>
+        <a href="https://wa.me/5.24773846682e+11?text=Hola,%20quiero%20mi%20c%C3%B3digo%20de%20descuento%20de%20bienvenida" target="_blank" class="btn-outline" style="flex:1;justify-content:center;padding:10px 14px;font-size:0.72rem">
+          <i class="fab fa-whatsapp"></i> WhatsApp
+        </a>
+      </div>
+    </div>
+    <div class="promo-card">
+      <div class="promo-label">✦ Envío gratis</div>
+      <div class="promo-title">$1,499+</div>
+      <p class="promo-desc">Envío sin costo a cualquier punto de la república en pedidos que superen $1,499 MXN. Se aplica automáticamente al llegar al monto.</p>
+      <div class="promo-code">AUTOMÁTICO</div>
+    </div>
+  </div>
+</section>
+
+<!-- SHIPPING -->
+<section class="section" id="envios">
+  <div class="section-header">
+    <p class="section-label">Logística</p>
+    <h2 class="section-title">Envíos a toda la república</h2>
+    <div class="divider"></div>
+  </div>
+  <div class="shipping-grid">
+    <div>
+      <table class="shipping-table">
+        <thead>
+          <tr>
+            <th>Servicio</th>
+            <th>Tiempo</th>
+            <th>Costo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Estándar nacional</td>
+            <td>5–7 días hábiles</td>
+            <td>$99 MXN</td>
+          </tr>
+          <tr>
+            <td>Express nacional</td>
+            <td>2–3 días hábiles</td>
+            <td>$159 MXN</td>
+          </tr>
+          <tr>
+            <td>Gratis (pedidos +$1,499)</td>
+            <td>5–7 días hábiles</td>
+            <td><span class="free-tag">GRATIS</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <ul class="shipping-features">
+        <li><i class="fas fa-map-marker-alt"></i> Enviamos a todos los estados de la república mexicana incluyendo zonas rurales.</li>
+        <li><i class="fas fa-box"></i> Empaque especializado anti-derrames con envoltura de burbuja y caja rígida.</li>
+        <li><i class="fas fa-qrcode"></i> Número de rastreo enviado por WhatsApp o email al confirmar tu pedido.</li>
+        <li><i class="fas fa-clock"></i> Pedidos realizados antes de las 2:00 PM son procesados el mismo día hábil.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contacto">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <h3>HEROD Decants</h3>
+      <p>Perfumería de nicho con los mejores decants de marcas exclusivas. Autenticidad garantizada en cada muestra.</p>
+      <div class="footer-socials">
+        <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="social-btn"><i class="fab fa-tiktok"></i></a>
+        <a href="#" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://wa.me/524773846682" class="social-btn"><i class="fab fa-whatsapp"></i></a>
+      </div>
+      <div class="footer-payments">
+        <div class="payment-badge"><i class="fab fa-paypal paypal-color"></i> PayPal</div>
+        <div class="payment-badge"><i class="fas fa-lock"></i> Pago seguro</div>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Tienda</h4>
+      <ul>
+        <li><a href="#catalogo">Catálogo</a></li>
+        <li><a href="#promociones">Promociones</a></li>
+        <li><a href="#decants">¿Qué es un decant?</a></li>
+        <li><a href="#envios">Envíos</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Marcas</h4>
+      <ul>
+        <li><a href="#">Diseñador</a></li>
+        <li><a href="#">Nicho</a></li>
+        <li><a href="#">Arabe</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#">Aviso de privacidad</a></li>
+        <li><a href="#">Términos y condiciones</a></li>
+        <li><a href="#">Política de devoluciones</a></li>
+        <li><a href="#">Preguntas frecuentes</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Herod Decants · Todos los derechos reservados</span>
+    <div class="footer-bottom-links">
+      <a href="#">Aviso de privacidad</a>
+      <a href="#">Términos</a>
+      <a href="https://wa.me/524773846682">Contacto</a>
+    </div>
+  </div>
+</footer>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay"></div>
+
+<!-- CART DRAWER -->
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <h2>Tu carrito</h2>
+    <button class="cart-close" id="cartClose"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="cart-body" id="cartBody"></div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="free-shipping-bar">
+      <p class="free-shipping-msg" id="shippingMsg"></p>
+      <div class="progress-bar"><div class="progress-fill" id="shippingProgress"></div></div>
+    </div>
+    <div class="cart-totals">
+      <div class="cart-row"><span>Subtotal</span><span id="cartSubtotal">$0</span></div>
+      <div class="cart-row"><span>Envío</span><span id="cartShipping">$99</span></div>
+      <div class="cart-row total"><span>Total</span><span id="cartTotal">$0</span></div>
+    </div>
+    <button class="btn-checkout" id="mpBtn">
+          <i class="fas fa-credit-card"></i> Pagar con tarjeta / OXXO
+        </button>
+        <div id="mpContainer"></div>
+    <p class="secure-note"><i class="fas fa-lock"></i>&nbsp;Pago 100% seguro · Protegido por PayPal</p>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-wrap">
+    <button class="modal-close-btn" id="modalClose"><i class="fas fa-times"></i></button>
+    <div class="modal" id="modalContent"></div>
+  </div>
+</div>
+
+<!-- WHATSAPP -->
+<a href="https://wa.me/524773846682?text=Hola,%20me%20interesa%20un%20decant" target="_blank" class="wa-btn">
+  <i class="fab fa-whatsapp"></i>
+  <span class="wa-tooltip">¿Tienes dudas? Escríbenos</span>
+</a>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg"></span></div>
+
+<!-- ADMIN TOGGLE -->
+<button class="admin-toggle" id="adminToggle">
+  <i class="fas fa-lock"></i> Admin
+</button>
+
+<!-- ADMIN OVERLAY -->
+<div class="admin-overlay" id="adminOverlay"></div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-header">
+    <div>
+      <h2>Panel de administración</h2>
+      <div class="admin-header-sub">Herod Decants · Gestión de catálogo</div>
+    </div>
+    <button class="admin-close" id="adminClose"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="admin-tabs">
+    <div class="admin-tab active" data-tab="perfumes">Perfumes</div>
+    <div class="admin-tab" data-tab="agregar">Agregar / Editar</div>
+    <div class="admin-tab" data-tab="ajustes">Ajustes</div>
+  </div>
+  <div class="admin-body" id="adminBody"></div>
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+// ── DATA ─────────────────────────────────────────────────────────
+const FREE_SHIPPING = 1499;
+const SHIPPING_COST = 99;
+
+const perfumes = [
+  {
+    id:1, tipo:"diseñador", brand:"Armani", name:"Acqua di Gio EDT",
+    emoji:"💧", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.410.avif",
+    desc:"El icónico marino de Armani. Fresco, limpio y eterno. Bergamota, jazmín marino y madera blanca crean una estela que evoca el Mediterráneo.",
+    top:"Bergamota, Neroli, Verde marino", heart:"Jazmín, Calone, Geranio", base:"Cedro, Musgo, Patchouli",
+    prices:{2:70,5:150,10:280}
+  },
+  {
+    id:2, tipo:"diseñador", brand:"Armani", name:"Acqua di Gio Profondo EDP",
+    emoji:"🌊", badge:null, popular:true,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.105624.avif",
+    desc:"La versión más oscura y profunda del clásico marino. Acuático en la apertura con un corazón mineral y una base de vetiver ahumado.",
+    top:"Bergamota, Menta acuática, Mandarina", heart:"Mineral, Cipres, Tomillo", base:"Vetiver, Patchouli, Musk",
+    prices:{2:80,5:160,10:300}
+  },
+  {
+    id:3, tipo:"diseñador", brand:"Armani", name:"Acqua di Gio Parfum",
+    emoji:"🌿", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.81508.avif",
+    desc:"La evolución definitiva del marino Armani. Más profundo, denso y masculino con incienso y vetiver que dan una presencia imponente.",
+    top:"Bergamota calabresa, Cardamomo", heart:"Incienso, Notas marinas", base:"Vetiver, Patchouli, Notas leñosas",
+    prices:{2:90,5:180,10:330}
+  },
+  {
+    id:4, tipo:"diseñador", brand:"Armani", name:"Armani Code EDP",
+    emoji:"⬛", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.96540.avif",
+    desc:"Seductor y magnético. Tonka, mandarina y vainilla se fusionan en una fragancia que define el hombre sofisticado y enigmático.",
+    top:"Mandarina", heart:"Nuez moscada", base:"Haba Tonka",
+    prices:{2:70,5:150,10:280}
+  },
+  {
+    id:5, tipo:"diseñador", brand:"Armani", name:"Stronger With You Intensely",
+    emoji:"🔥", badge:null, popular:true,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.52802.avif",
+    desc:"Intenso, dulce y adictivo. Castaña, cardamomo y vainilla crean una calidez envolvente perfecta para las noches de invierno.",
+    top:"Cardamomo, Pimienta rosa, Lavanda", heart:"Castaña, Salvia, Violeta", base:"Vainilla, Cedro, Musgo de roble",
+    prices:{2:80,5:160,10:300}
+  },
+  {
+    id:6, tipo:"diseñador", brand:"Armani", name:"Stronger With You EDT",
+    emoji:"💪", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.45258.avif",
+    desc:"Fresco y elegante. La versión más ligera de Stronger With You con cardamomo, lavanda y un toque de castaña sobre base amaderada.",
+    top:"Cardamomo, Pimienta, Salvia", heart:"Lavanda, Castaña, Geranio", base:"Vainilla, Sándalo, Cedro",
+    prices:{2:130,5:320,10:620}
+  },
+  {
+    id:7, tipo:"diseñador", brand:"Azzaro", name:"The Most Wanted EDT Intense",
+    emoji:"👑", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.90953.avif",
+    desc:"Magnético y misterioso. Lavanda, cardamomo y tonka se combinan en una fragancia intensa y sofisticada con mucha estela.",
+    top:"Bergamota, Jengibre, Cardamomo", heart:"Lavanda, Especias", base:"Haba Tonka, Cedro, Musgo de roble",
+    prices:{2:60,5:110,10:190}
+  },
+  {
+    id:8, tipo:"diseñador", brand:"Azzaro", name:"The Most Wanted Intense",
+    emoji:"🃏", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.66826.avif",
+    desc:"La versión más oscura y especiada de la línea. Bourbon, lavanda y tonka crean una fragancia nocturna y adictiva.",
+    top:"Limón, Cardamomo, Lavanda", heart:"Bourbon, Tabaco", base:"Haba Tonka, Vetiver, Patchouli",
+    prices:{2:60,5:110,10:190}
+  },
+  {
+    id:9, tipo:"diseñador", brand:"Azzaro", name:"Wanted by Night",
+    emoji:"🌙", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.49144.avif",
+    desc:"Noche, poder y sensualidad. Notas de cuero, cedro y patchouli definen este oriental sofisticado para el hombre nocturno.",
+    top:"Cardamomo, Pimienta rosa, Mandarina", heart:"Cedro, Patchouli, Rosa", base:"Cuero, Ámbar, Sándalo",
+    prices:{2:60,5:110,10:190}
+  },
+  {
+    id:10, tipo:"diseñador", brand:"Azzaro", name:"Forever Wanted",
+    emoji:"♾️", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.102882.avif",
+    desc:"Cálido y persistente. Una fragancia que dura horas y que crean una estela irresistible.",
+    top:"Frambuesa, Bergamota", heart:"Cardamomo, Lavanda", base:"Cuero",
+    prices:{2:80,5:160,10:300}
+  },
+  {
+    id:11, tipo:"diseñador", brand:"Boss", name:"Boss Bottled Infinite",
+    emoji:"∞", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.54204.avif",
+    desc:"Refrescante y limpio con un toque cremoso. Manzana verde, lavanda y sándalo crean un clásico moderno.",
+    top:"Manzana, Canela", heart:"Lavanda", base:"Sándalo, Cedro",
+    prices:{2:50,5:100,10:170}
+  },
+  {
+    id:12, tipo:"diseñador", brand:"Boss", name:"Boss Bottled EDT",
+    emoji:"🍎", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.383.avif",
+    desc:"El clásico de clásicos. Manzana, canela y sándalo en una fragancia que ha definido la masculinidad elegante por décadas.",
+    top:"Manzana, Ciruela, Geranio", heart:"Canela, Clavel, Pelargonio", base:"Sándalo, Cedro, Vetiver",
+    prices:{2:50,5:100,10:170}
+  },
+  {
+    id:14, tipo:"diseñador", brand:"Versace", name:"Versace Eros EDT",
+    emoji:"⚡", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.16657.avif",
+    desc:"Poderoso e irresistible como el dios del amor. Menta, manzana verde y tonka crean una fragancia juvenil pero sofisticada.",
+    top:"Menta, Manzana verde, Limón", heart:"Haba Tonka, Geranio, Flor de Ambrosia", base:"Vainilla, Vetiver, Cedro",
+    prices:{2:60,5:110,10:190}
+  },
+  {
+    id:15, tipo:"diseñador", brand:"Versace", name:"Versace Eros Flame",
+    emoji:"🔴", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.52180.avif",
+    desc:"La versión ardiente y sensual de Eros. Mandarina, pimienta rosa y madera de sándalo crean una fragancia cálida y apasionada.",
+    top:"Mandarina", heart:"Geranio rosa, Pimienta negra", base:"Sándalo, Ámbar, Vainilla",
+    prices:{2:70,5:150,10:270}
+  },
+  {
+    id:16, tipo:"diseñador", brand:"Versace", name:"Versace Pour Homme",
+    emoji:"🏛️", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.2318.avif",
+    desc:"Clásico italiano refinado. Limón de Sicilia, neroli y madera de cedro en una fragancia fresca y elegante de uso diario.",
+    top:"Limón, Bergamota, Neroli", heart:"Jacinto, Naranja amarga, Cedro", base:"Cedro, Ciprés, Musk",
+    prices:{2:60,5:110,10:190}
+  },
+  {
+    id:17, tipo:"diseñador", brand:"Versace", name:"Versace Dylan Blue",
+    emoji:"🔵", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.40031.avif",
+    desc:"Fresco y moderno. Hoja de grosella, pomelo y notas acuáticas se funden con patchouli y ámbar en una fragancia versátil y masculina.",
+    top:"Pomelo, Hoja de grosella, Higo", heart:"Violeta, Nenúfar, Patchouli", base:"Ámbar, Musk, Incienso",
+    prices:{2:60,5:110,10:190}
+  },
+  {
+    id:19, tipo:"diseñador", brand:"Montblanc", name:"Montblanc Explorer",
+    emoji:"🗺️", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.52002.avif",
+    desc:"Para el hombre aventurero. Bergamota, cuero y patchouli crean una fragancia sofisticada que evoca la exploración y el descubrimiento.",
+    top:"Bergamota, Pimienta de Sichuan", heart:"Vetiver haitiano, Cuero", base:"Madera, Patchouli",
+    prices:{2:60,5:110,10:190}
+  },
+  {
+    id:20, tipo:"diseñador", brand:"Montblanc", name:"Montblanc Platinum",
+    emoji:"🪙", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.81392.avif",
+    desc:"Fresco y elegante como el metal del que toma nombre. Notas acuáticas, cedro plateado y musk blanco para el hombre moderno.",
+    top:"Violeta", heart:"Esclarea", base:"Sandalo",
+    prices:{2:60,5:110,10:190}
+  },
+  {
+    id:21, tipo:"diseñador", brand:"Montblanc", name:"Montblanc Starwalker",
+    emoji:"⭐", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.4023.avif",
+    desc:"Elegante y futurista. Una fragancia que combina frescura cítrica con madera de cedro y almizcle para una presencia sutil pero duradera.",
+    top:"Bergamota, Lavanda, Pimienta", heart:"Cedro, Iris", base:"Sándalo, Musk, Vetiver",
+    prices:{2:50,5:100,10:170}
+  },
+  {
+    id:22, tipo:"diseñador", brand:"Montblanc", name:"Montblanc Legend EDP",
+    emoji:"🏔️", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.62583.avif",
+    desc:"La versión más intensa del Legend. Lavanda, notas verdes y vetiver crean una fragancia que perdura todo el día con gran proyección.",
+    top:"Bergamota, Lavanda", heart:"Maderas", base:"Cuero, Musgo",
+    prices:{2:60,5:110,10:190}
+  },
+  {
+    id:23, tipo:"diseñador", brand:"Montblanc", name:"Montblanc Legend Spirit",
+    emoji:"👻", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.33443.avif",
+    desc:"Fresca y luminosa. La versión más ligera del Legend con notas acuáticas, madera de cedro y almizcle blanco para el uso diario.",
+    top:"Bergamota, Pomelo, Menta", heart:"Lavanda, Sándalo", base:"Musk blanco, Cedro",
+    prices:{2:60,5:110,10:190}
+  },
+  {
+    id:24, tipo:"diseñador", brand:"Jean Paul Gaultier", name:"JPG Le Male Le Parfum",
+    emoji:"🫙", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.61856.avif",
+    desc:"La versión más intensa del icónico Le Male. Lavanda, cardamomo y vainilla en una composición oscura, profunda y magnéticamente seductora.",
+    top:"Lavanda, Cardamomo", heart:"Iris", base:"Vainilla",
+    prices:{2:90,5:180,10:330}
+  },
+  {
+    id:25, tipo:"diseñador", brand:"Jean Paul Gaultier", name:"JPG Le Male",
+    emoji:"⚓", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.430.avif",
+    desc:"El clásico definitivo de JPG. Lavanda, menta y vainilla en el frasco icónico de torso masculino. Sexy, irreverente e inconfundible.",
+    top:"Menta, Lavanda, Cardamomo", heart:"Canela, Cumin, Flor de naranja", base:"Vainilla, Sándalo, Cedro",
+    prices:{2:60,5:130,10:230}
+  },
+  {
+    id:26, tipo:"diseñador", brand:"Jean Paul Gaultier", name:"JPG Ultra male",
+    emoji:"💪", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.30947.avif",
+    desc:"Intenso y dulce. Lavanda, vainilla y notas de pera crean una fragancia audaz, provocadora y extremadamente larga duración.",
+    top:"Pera, Lavanda, Menta", heart:"Canela", base:"Vainilla",
+    prices:{2:120,5:290,10:580}
+  },
+  {
+    id:27, tipo:"diseñador", brand:"Jean Paul Gaultier", name:"JPG Le Male Elixir",
+    emoji:"⚗️", badge:null, popular:true,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.81642.avif",
+    desc:"La destilación más pura y oscura del Le Male. Cardamomo negro, incienso y lavanda en una composición oscura e hipnótica.",
+    top:"Cardamomo negro, Menta", heart:"Incienso, Lavanda oscura", base:"Ámbar, Vetiver, Cuero",
+    prices:{2:90,5:180,10:330}
+  },
+  {
+    id:28, tipo:"diseñador", brand:"Jean Paul Gaultier", name:"JPG Le Beau Le Parfum",
+    emoji:"🏖️", badge:null, popular:true,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.72158.avif",
+    desc:"Solar y tropical. Coco, piña sobre una base de sándalo cremoso para una fragancia paradisíaca e irresistible.",
+    top:"Piña", heart:"Coco", base:"Haba tonka",
+    prices:{2:90,5:180,10:330}
+  },
+  {
+    id:29, tipo:"diseñador", brand:"Jean Paul Gaultier", name:"JPG Le Beau EDT",
+    emoji:"🌴", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.55785.avif",
+    desc:"Fresco y luminoso. Una versión más ligera con notas tropicales, coco y sándalo cremoso para los días cálidos y soleados.",
+    top:"Bergamota", heart:"Coco", base:"Haba tonka",
+    prices:{2:70,5:150,10:280}
+  },
+  {
+    id:30, tipo:"diseñador", brand:"Jean Paul Gaultier", name:"JPG Le Beau Paradise Garden",
+    emoji:"🌺", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.88836.avif",
+    desc:"Un jardín del paraíso en un frasco. Menta y coco sobre base de vainilla y sándalo. Cálido y sensual.",
+    top:"Menta, Notas acuaticas", heart:"Coco, Higo", base:"Haba Tonka, Sándalo",
+    prices:{2:90,5:180,10:330}
+  },
+  {
+    id:32, tipo:"diseñador", brand:"Jean Paul Gaultier", name:"Scandal Le Parfum",
+    emoji:"🖤", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.74915.avif",
+    desc:"La versión más oscura y seductora del Scandal. Una fragancia nocturna de presencia irresistible.",
+    top:"Geranio", heart:"Haba Tonka", base:"Sandalo",
+    prices:{2:70,5:150,10:280}
+  },
+  {
+    id:34, tipo:"diseñador", brand:"Dior", name:"Sauvage EDP",
+    emoji:"🌌", badge:null, popular:true,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.48100.avif",
+    desc:"Más profundo y duradero que el EDT. Lavanda, nuez de Grasse y ambroxan crean una versión más elegante y de mayor proyección.",
+    top:"Bergamota, Pimienta de Sichuan", heart:"Lavanda de Grasse, Nuez", base:"Ambroxan",
+    prices:{2:100,5:210,10:380}
+  },
+  {
+    id:36, tipo:"diseñador", brand:"Dior", name:"Dior Homme 2020",
+    emoji:"🌸", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.58714.avif",
+    desc:"Elegancia parisina en estado puro. Iris, lavanda y vetivercrean una fragancia suave, refinada y sofisticada de uso diario.",
+    top:"Bergamota, Pimienta rosa", heart:"Cedro", base:"Vetiver, Almizcle",
+    prices:{2:90,5:180,10:330}
+  },
+  {
+    id:37, tipo:"diseñador", brand:"Dior", name:"Dior Homme Parfum",
+    emoji:"🎩", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.101016.avif",
+    desc:"La versión más intensa del Homme. Iris, cuero y lavanda en una composición masculina de gran riqueza y profundidad.",
+    top:"Iris", heart:"Ambar", base:"Vetiver, Patchouli",
+    prices:{2:100,5:210,10:380}
+  },
+  {
+    id:38, tipo:"diseñador", brand:"Ferragamo", name:"Uomo Signature",
+    emoji:"👞", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.50797.avif",
+    desc:"Refinamiento italiano. Madera, especias y cuero crean una fragancia elegante y sofisticada que refleja el lujo toscano.",
+    top:"Mandarina", heart:"Cardamomo, Canela", base:"Cuero, Cafe",
+    prices:{2:50,5:100,10:170}
+  },
+  {
+    id:41, tipo:"diseñador", brand:"Carolina Herrera", name:"Bad Boy Cobalt",
+    emoji:"🔷", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.71888.avif",
+    desc:"El lado fresco del chico malo. Notas acuáticas, lavanda y cedro crean una versión más ligera y cotidiana de la línea.",
+    top:"Lavanda", heart:"Ciruela", base:"Cedro, Trufa",
+    prices:{2:70,5:150,10:280}
+  },
+  {
+    id:42, tipo:"diseñador", brand:"Valentino", name:"Born in Roma EDT",
+    emoji:"🐺", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.55963.avif",
+    desc:"Roma en un frasco. Lavanda, salvia y vetiver capturan la esencia de la eterna ciudad con un toque moderno y vibrante.",
+    top:"Notas minerales, Violeta", heart:"Salvia, Jengibre", base:"Vetiver, Cedro, Ámbar gris",
+    prices:{2:90,5:180,10:330}
+  },
+  {
+    id:43, tipo:"diseñador", brand:"Valentino", name:"Born in Roma Intense",
+    emoji:"🐺", badge:null, popular:true,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.78740.avif",
+    desc:"Roma en su versión más intensa. Lavanda oscura, incienso y madera de guaiac crean una fragancia densa y de gran proyección.",
+    top:"Bergamota, Lavanda oscura", heart:"Incienso, Salvia", base:"Madera de Guaiac, Ámbar, Vetiver",
+    prices:{2:100,5:200,10:370}
+  },
+  {
+    id:44, tipo:"diseñador", brand:"Valentino", name:"Born in Roma Coral Fantasy",
+    emoji:"🪸", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.71761.avif",
+    desc:"Vibrante y adictivo. La manzana roja, lavanda y tabaco crean una fragancia alegre, moderna y llena de energía con el sello Valentino.",
+    top:"Manzana roja, Cardamomo, Bergamota", heart:"Lavanda", base:"Tabaco, Vetiver",
+    prices:{2:90,5:180,10:330}
+  },
+  {
+    id:47, tipo:"diseñador", brand:"Kenzo", name:"Kenzo Homme EDT Intense",
+    emoji:"🌿", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.67899.avif",
+    desc:"Más cálido e intenso. Cedro negro, especias y notas amaderadas crean una versión más densa y envolvente del clásico Kenzo Homme.",
+    top:"Notas acuaticas, Pimienta", heart:"Higo", base:"Sándalo, Patchouli, Vetiver",
+    prices:{2:60,5:110,10:190}
+  },
+  {
+    id:48, tipo:"diseñador", brand:"Kenzo", name:"Kenzo Homme EDP",
+    emoji:"🎋", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.73225.avif",
+    desc:"La versión más refinada. Las notas marinas y el cuero crean una fragancia minimalista y elegante de inspiración zen.",
+    top:"Notas marinas", heart:"Cuero", base:"Patchouli",
+    prices:{2:60,5:110,10:190}
+  },
+  {
+    id:49, tipo:"diseñador", brand:"Kenzo", name:"Kenzo Homme Marine",
+    emoji:"🌊", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.80042.avif",
+    desc:"El Kenzo Homme marino. Notas acuáticas, algas y sandalo para una fragancia fresca que evoca el Pacífico y sus profundidades.",
+    top:"Notas marinas", heart:"Ylang ylang", base:"Musk, Sándalo, Vetiver",
+    prices:{2:60,5:110,10:190}
+  },
+  {
+    id:51, tipo:"diseñador", brand:"Issey Miyake", name:"Le Sel d'Issey EDT",
+    emoji:"🧂", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.95642.avif",
+    desc:"El océano en estado puro. Notas salinas, jengibre y madera flotante en una fragancia minimalista que captura la esencia del mar.",
+    top:"Jengibre, Sal marina, Notas acuáticas", heart:"Algas, Vetiver", base:"Madera flotante, Musgo",
+    prices:{2:70,5:150,10:280}
+  },
+  {
+    id:52, tipo:"diseñador", brand:"YSL", name:"Y EDP",
+    emoji:"🔤", badge:null, popular:true,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.50757.avif",
+    desc:"Moderno y atrevido. Manzana fresca, salvia y cedro en una fragancia fresca y amaderada que define al hombre contemporáneo.",
+    top:"Manzana, Bergamota, Jengibre", heart:"Salvia, Geranio", base:"Cedro, Ámbar gris, Haba Tonka",
+    prices:{2:90,5:200,10:360}
+  },
+  {
+    id:54, tipo:"diseñador", brand:"YSL", name:"Myself EDP",
+    emoji:"🪞", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.84094.avif",
+    desc:"Audaz y contemporáneo. Bergamota y flor de naranjo crean una fragancia masculina que invita a la autoexpresión total.",
+    top:"Bergamota", heart:"Flor de naranjo", base:"Ambrofix",
+    prices:{2:90,5:200,10:360}
+  },
+  {
+    id:55, tipo:"diseñador", brand:"YSL", name:"L'Homme",
+    emoji:"👔", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.734.avif",
+    desc:"El hombre YSL en su expresión más pura. Jengibre, albahaca y cedro en una fragancia fresca, elegante y extremadamente versátil.",
+    top:"Jengibre, Bergamota, Limón", heart:"Albahaca, Pimienta blanca", base:"Cedro, Vetiver, Tonka",
+    prices:{2:90,5:180,10:330}
+  },
+  {
+    id:57, tipo:"diseñador", brand:"Hermès", name:"Terre d'Hermès Parfum",
+    emoji:"🌄", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.8282.avif",
+    desc:"La versión más concentrada y terrosa. Madera, flint mineral y pimienta crean una fragancia densa y masculina de gran carácter.",
+    top:"Pimienta negra, Pomelo, Naranja", heart:"Flint", base:"Madera, Benjui",
+    prices:{2:120,5:260,10:490}
+  },
+  {
+    id:58, tipo:"diseñador", brand:"Hermès", name:"Terre d'Hermès Eau Givrée",
+    emoji:"❄️", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.72439.avif",
+    desc:"La versión helada y mineral. Cidra, pomelo y cedro glacial crean una fragancia inusualmente fresca y cristalina del Terre.",
+    top:"Cidra", heart:"Timur, Enebro", base:"Notas minerales",
+    prices:{2:90,5:180,10:330}
+  },
+  {
+    id:60, tipo:"diseñador", brand:"Polo Ralph Lauren", name:"Polo Blue Parfum",
+    emoji:"🌀", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.73299.avif",
+    desc:"La versión más intensa y elegante del Blue. Cardamomo, vetiver y madera oscura crean una fragancia más sofisticada y duradera.",
+    top:"Mandarina, Bergamota", heart:"Lavanda, Esclarea", base:"Roble, Incienso, Patchouli",
+    prices:{2:70,5:150,10:280}
+  },
+  {
+    id:61, tipo:"diseñador", brand:"Polo Ralph Lauren", name:"Polo Red Parfum",
+    emoji:"🔴", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.79161.avif",
+    desc:"Intenso y apasionado. La versión más oscura y seductora de la línea Polo Red.",
+    top:"Pomelo rojo, Limón, Pimienta rosa", heart:"Lavanda, Absenta", base:"Almizcle, Cedro",
+    prices:{2:70,5:150,10:280}
+  },
+  {
+    id:64, tipo:"diseñador", brand:"Dolce & Gabbana", name:"Light Blue EDT 2025",
+    emoji:"🍋", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.104984.avif",
+    desc:"El verano siciliano en un frasco. Limón, manzana y cedro en la fragancia veraniega más icónica y fresca de la perfumería contemporánea.",
+    top:"Limón siciliano, Manzana, Cedro blanco", heart:"Bambú, Jazmín, Flor de gardenia", base:"Almizcle blanco, Cedro, Ámbar",
+    prices:{2:60,5:110,10:190}
+  },
+  {
+    id:65, tipo:"diseñador", brand:"Dolce & Gabbana", name:"Light Blue Intense",
+    emoji:"💙", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.44035.avif",
+    desc:"La versión más intensa del clásico veraniego. Limón, madera de cedro y ámbar crean una fragancia más duradera y envolvente.",
+    top:"Limón siciliano, Mandarina", heart:"Notas marinas", base:"Ámbar, Almizcle",
+    prices:{2:60,5:110,10:190}
+  },
+  {
+    id:66, tipo:"diseñador", brand:"Dolce & Gabbana", name:"K EDP",
+    emoji:"👑", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.62311.avif",
+    desc:"Rey y guerrero. Cardamomo, higo y madera de cedro crean una fragancia masculina de gran carisma y presencia imponente.",
+    top:"Cardamomo, Bergamota, Pimienta", heart:"Higo, Lavanda", base:"Cedro, Vetiver, Patchouli",
+    prices:{2:70,5:150,10:280}
+  },
+  {
+    id:67, tipo:"diseñador", brand:"Armaf", name:"Club de Nuit Intense Man",
+    emoji:"🍍", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.34696.avif",
+    desc:"El clon más exitoso de Aventus. Piña, abedul y ámbar gris en una fragancia de altísima proyección y calidad a precio accesible. La bestia negra.",
+    top:"Piña, Bergamota, Manzana negra", heart:"Abedul, Rosa, Jazmín", base:"Musgo de roble, Ambergris, Musk",
+    prices:{2:40,5:80,10:140}
+  },
+  {
+    id:68, tipo:"diseñador", brand:"Armaf", name:"Club de Nuit Urban Man",
+    emoji:"🏙️", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.77860.avif",
+    desc:"Urbano y sofisticado. Bergamota, cuero y madera de guaiac para el hombre de ciudad que busca elegancia sin pretensiones.",
+    top:"Bergamota, Pimienta negra", heart:"Elemi", base:"Cedro, Ambroxan",
+    prices:{2:40,5:80,10:140}
+  },
+  {
+    id:69, tipo:"diseñador", brand:"Armaf", name:"Club de Nuit Iconic",
+    emoji:"⚜️", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.78475.avif",
+    desc:"El más versatil de la línea. Dupe de Bleu de Chanel.",
+    top:"Bergamota, Limón, Pimienta rosa", heart:"Jengibre", base:"MAderas, Sandalo, Ambar",
+    prices:{2:40,5:80,10:140}
+  },
+  {
+    id:70, tipo:"árabe", brand:"Lattafa", name:"Asad",
+    emoji:"🦁", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.72821.avif",
+    desc:"El rey de la jungla en un frasco. Oud, patchouli y ámbar crean una fragancia árabe poderosa y majestuosa de larga duración.",
+    top:"Bergamota, Pimienta", heart:"Oud, Patchouli, Rosa", base:"Ámbar, Musk, Sándalo",
+    prices:{2:40,5:70,10:120}
+  },
+  {
+    id:71, tipo:"árabe", brand:"Lattafa", name:"Asad Elixir",
+    emoji:"🍯", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.117616.avif",
+    desc:"La versión más dulce y concentrada del Asad. Miel, vainilla y oud en una fragancia cálida y adictiva de alta concentración.",
+    top:"Miel, Cardamomo", heart:"Oud, Rosa árabe", base:"Vainilla, Ámbar, Musk",
+    prices:{2:40,5:80,10:140}
+  },
+  {
+    id:72, tipo:"árabe", brand:"Lattafa", name:"Asad Bourbon",
+    emoji:"🥃", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.101124.avif",
+    desc:"Oud y bourbon en perfecta armonía. Notas de whisky, cuero y madera oscura crean una fragancia sofisticada y masculina.",
+    top:"Bourbon, Bergamota", heart:"Oud, Cuero, Cedro", base:"Ámbar, Vainilla, Musk",
+    prices:{2:40,5:80,10:140}
+  },
+  {
+    id:73, tipo:"árabe", brand:"Lattafa", name:"Vintage Radio",
+    emoji:"📻", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.89454.avif",
+    desc:"Nostálgico y elegante. Una fragancia que evoca los salones de antaño con notas de cuero, tabaco y madera envejecida.",
+    top:"Bergamota, Limón", heart:"Tabaco, Cuero, Especias", base:"Oud, Sándalo, Ámbar",
+    prices:{2:40,5:80,10:140}
+  },
+  {
+    id:74, tipo:"árabe", brand:"Lattafa", name:"Art of Universe",
+    emoji:"🌌", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.101314.avif",
+    desc:"Un universo de aromas. Oud, rosa árabe y especias exóticas en una fragancia opulenta que celebra la tradición perfumística árabe.",
+    top:"Azafrán, Cardamomo, Rosa", heart:"Oud, Incienso, Patchouli", base:"Ámbar, Musk, Sándalo",
+    prices:{2:40,5:80,10:140}
+  },
+  {
+    id:75, tipo:"nicho", brand:"Amouage", name:"Reflection Man",
+    emoji:"🪞", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.920.avif",
+    desc:"Masculinidad redefinida. Neroli, ylang ylang y sándalo en una fragancia atrevidamente floral y profundamente masculina de Amouage.",
+    top:"Romero, Pimienta rosa", heart:"Ylang ylang, JAzmine, Neroli", base:"Sándalo, Cedro, Vetiver",
+    prices:{2:170,5:370,10:700}
+  },
+  {
+    id:76, tipo:"nicho", brand:"Xerjoff", name:"Erba Pura",
+    emoji:"🍊", badge:null, popular:true,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.55157.avif",
+    desc:"Luminoso y alegre. Frutal en una fragancia solar que irradia energía y sofisticación.",
+    top:"Naranja siciliana", heart:"Frutas", base:"Almizcle, Vainilla, Cedro",
+    prices:{2:170,5:370,10:700}
+  },
+  {
+    id:77, tipo:"nicho", brand:"Xerjoff", name:"Naxos",
+    emoji:"🍯", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.30529.avif",
+    desc:"La isla griega en un frasco. Lavanda, miel y tabaco sobre vainilla y sándalo en una fragancia cálida, dulce y absolutamente adictiva.",
+    top:"Bergamota, Lavanda, Miel", heart:"Miel, Canela", base:"Tabaco, Vainilla",
+    prices:{2:170,5:370,10:700}
+  },
+  {
+    id:78, tipo:"nicho", brand:"Xerjoff", name:"Torino 21",
+    emoji:"🌹", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.70424.avif",
+    desc:"Elegancia italiana en su máxima expresión en una fragancia de extremada sofisticación.",
+    top:"Limon, Menta, Albahaca", heart:"Lavanda, Romero", base:"Almizcle",
+    prices:{2:170,5:370,10:700}
+  },
+  {
+    id:79, tipo:"nicho", brand:"Creed", name:"Aventus",
+    emoji:"⚔️", badge:null, popular:true,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.9828.avif",
+    desc:"El perfume definitivo del hombre exitoso. Piña caramelizada, abedul ahumado y notas de pachulí que comunican poder y carisma.",
+    top:"Piña, Bergamota, Grosella negra", heart:"Abedul, Patchouli, Rosa", base:"Musgo de roble, Ambergris, Musk",
+    prices:{2:240,5:540,10:1010}
+  },
+  {
+    id:80, tipo:"nicho", brand:"Essential Parfums", name:"Bois Impérial",
+    emoji:"🌳", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.64338.avif",
+    desc:"Un bosque imperial. Maderas y especias en una fragancia majestuosa e hipnótica de nicho accesible.",
+    top:"Albahaca", heart:"Timur", base:"Vetiver, Akigalawood",
+    prices:{2:90,5:200,10:360}
+  },
+  {
+    id:81, tipo:"nicho", brand:"Parfums de Marly", name:"Layton",
+    emoji:"🐴", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.39314.avif",
+    desc:"La joya de la corona de Parfums de Marly. Manzana, lavanda y vainilla sobre sándalo y especias en una fragancia elegante y adictiva.",
+    top:"Manzana, Bergamota, Lavanda", heart:"Violeta, Geranio, Jazmín", base:"Sándalo, Vainilla, Pimienta",
+    prices:{2:180,5:400,10:750}
+  },
+  {
+    id:83, tipo:"diseñador", brand:"Viktor & Rolf", name:"Spicebomb EDT",
+    emoji:"💣", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.13857.avif",
+    desc:"Una bomba de especias. Pimienta, canela y vetiver en una fragancia que explota con intensidad y deja una estela arrolladora.",
+    top:"Bergamota, Pimienta", heart:"Canela, Cardamomo, Tabaco", base:"Vetiver, Cuero, Sándalo",
+    prices:{2:70,5:140,10:250}
+  },
+  {
+    id:84, tipo:"diseñador", brand:"Givenchy", name:"Gentleman Society EDP",
+    emoji:"🎭", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.78639.avif",
+    desc:"El caballero moderno. Cardamomo y cedro de Virginia crean una fragancia elegante y refinada que define la sofisticación contemporánea.",
+    top:"Cardamomo", heart:"Vetiver", base:"Vainilla, Cedro",
+    prices:{2:70,5:150,10:280}
+  },
+  {
+    id:85, tipo:"diseñador", brand:"Givenchy", name:"Gentleman Society Ambree",
+    emoji:"🥂", badge:null, popular:false,
+    imgUrl:"https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.101102.avif",
+    desc:"La versión cálida y ámbar. Iris oscuro, tabaco dulce y madera de cedro sobre tonka y ámbar para una fragancia más intensa y nocturna.",
+    top:"Nuez", heart:"Sandalo", base:"Tabaco, Vainilla",
+    prices:{2:90,5:180,10:330}
+  }
+];
+
+// ── STATE ────────────────────────────────────────────────────────
+let cart = [];
+let activeFilter = "Todos";
+let currentProduct = null;
+let selectedSize = null;
+
+// ── UTILS ────────────────────────────────────────────────────────
+const fmt = n => "$" + n.toLocaleString("es-MX") + " MXN";
+const allBrands = ["Todos", ...new Set(perfumes.map(p => p.brand))];
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  document.getElementById("toastMsg").textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2800);
+}
+
+// ── FILTERS ─────────────────────────────────────────────────────
+function renderFilters() {
+  const container = document.getElementById("filterTabs");
+  container.innerHTML = allBrands.map(b =>
+    `<button class="filter-tab${b===activeFilter?" active":""}" data-brand="${b}">${b}</button>`
+  ).join("");
+  container.querySelectorAll(".filter-tab").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeFilter = btn.dataset.brand;
+      renderFilters();
+      renderProducts();
+    });
+  });
+}
+
+
+
+// ── MODAL ────────────────────────────────────────────────────────
+function openModal(id) {
+  currentProduct = perfumes.find(p => p.id === id);
+  selectedSize = 5;
+  const mo = document.getElementById("modalOverlay");
+  document.getElementById("modalContent").innerHTML = `
+    <div class="modal-inner">
+      <div class="modal-img${currentProduct.imgUrl?' has-photo':''}">
+        ${currentProduct.imgUrl ? `<img src="${currentProduct.imgUrl}" alt="${currentProduct.name}" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:4px"/>` : currentProduct.emoji}
+      </div>
+      <div class="modal-content">
+        <div class="modal-brand">${currentProduct.brand}</div>
+        <h2 class="modal-name">${currentProduct.name}</h2>
+        <p class="modal-desc">${currentProduct.desc}</p>
+        <div class="notes-section">
+          <div class="notes-title">Pirámide olfativa</div>
+          <div class="notes-grid">
+            <div class="note-group">
+              <div class="note-label">Salida</div>
+              <div class="note-items">${currentProduct.top}</div>
+            </div>
+            <div class="note-group">
+              <div class="note-label">Corazón</div>
+              <div class="note-items">${currentProduct.heart}</div>
+            </div>
+            <div class="note-group">
+              <div class="note-label">Fondo</div>
+              <div class="note-items">${currentProduct.base}</div>
+            </div>
+          </div>
+        </div>
+        <div class="size-selector">
+          <div class="size-label">Elige tu presentación</div>
+          <div class="size-options" id="sizeOptions">
+            ${[2,5,10].map(s => `
+              <div class="size-opt${s===5?" active":""}" data-size="${s}">
+                <div class="size-ml">${s} ml</div>
+                <div class="size-price">${fmt(currentProduct.prices[s])}</div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+        <button class="btn-primary" id="modalAddBtn" style="width:100%;justify-content:center">
+          <i class="fas fa-shopping-bag"></i> Agregar al carrito
+        </button>
+      </div>
+    </div>
+  `;
+  document.querySelectorAll(".size-opt").forEach(opt => {
+    opt.addEventListener("click", () => {
+      selectedSize = parseInt(opt.dataset.size);
+      document.querySelectorAll(".size-opt").forEach(o => o.classList.remove("active"));
+      opt.classList.add("active");
+    });
+  });
+  document.getElementById("modalAddBtn").addEventListener("click", () => {
+    addToCart(currentProduct, selectedSize);
+    closeModal();
+    openCart();
+  });
+  mo.classList.add("open");
+  document.getElementById("overlay").classList.add("open");
+}
+function closeModal() {
+  document.getElementById("modalOverlay").classList.remove("open");
+  document.getElementById("overlay").classList.remove("open");
+}
+
+// ── CART ─────────────────────────────────────────────────────────
+function addToCart(product, size) {
+  const key = `${product.id}-${size}`;
+  const existing = cart.find(i => i.key === key);
+  if (existing) { existing.qty++; }
+  else {
+    cart.push({ key, id: product.id, brand: product.brand, name: product.name, emoji: product.emoji, imgUrl: product.imgUrl||'', size, price: product.prices[size], qty: 1 });
+  }
+  updateCartCount();
+  renderCart();
+  showToast(`${product.name} (${size}ml) agregado al carrito`);
+}
+
+function updateCartCount() {
+  const total = cart.reduce((a,i) => a+i.qty, 0);
+  document.getElementById("cartCount").textContent = total;
+}
+
+function renderCart() {
+  const body = document.getElementById("cartBody");
+  const footer = document.getElementById("cartFooter");
+  if (!cart.length) {
+    body.innerHTML = `<div class="cart-empty"><i class="fas fa-shopping-bag"></i><p>Tu carrito está vacío</p></div>`;
+    footer.style.display = "none";
+    return;
+  }
+  footer.style.display = "block";
+  body.innerHTML = cart.map(item => `
+    <div class="cart-item" data-key="${item.key}">
+      <div class="cart-item-img">
+        ${item.imgUrl
+          ? `<img src="${item.imgUrl}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover;border-radius:4px"/>`
+          : item.emoji}
+      </div>
+      <div class="cart-item-info">
+        <div class="cart-item-brand">${item.brand}</div>
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-size">${item.size} ml</div>
+        <div class="cart-item-actions">
+          <div class="qty-ctrl">
+            <button class="qty-btn" data-action="dec" data-key="${item.key}"><i class="fas fa-minus"></i></button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn" data-action="inc" data-key="${item.key}"><i class="fas fa-plus"></i></button>
+          </div>
+          <span class="cart-item-price">${fmt(item.price * item.qty)}</span>
+          <button class="cart-remove" data-key="${item.key}"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    </div>
+  `).join("");
+
+  body.querySelectorAll(".qty-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.key;
+      const item = cart.find(i => i.key === key);
+      if (!item) return;
+      if (btn.dataset.action === "inc") item.qty++;
+      else if (btn.dataset.action === "dec") {
+        item.qty--;
+        if (item.qty <= 0) cart.splice(cart.indexOf(item), 1);
+      }
+      updateCartCount(); renderCart();
+    });
+  });
+  body.querySelectorAll(".cart-remove").forEach(btn => {
+    btn.addEventListener("click", () => {
+      cart = cart.filter(i => i.key !== btn.dataset.key);
+      updateCartCount(); renderCart();
+    });
+  });
+
+  const subtotal = cart.reduce((a,i) => a + i.price*i.qty, 0);
+  const freeShip = subtotal >= FREE_SHIPPING;
+  const shipping = freeShip ? 0 : SHIPPING_COST;
+  const total = subtotal + shipping;
+  const progress = Math.min((subtotal / FREE_SHIPPING) * 100, 100);
+
+  document.getElementById("cartSubtotal").textContent = fmt(subtotal);
+  document.getElementById("cartShipping").textContent = freeShip ? "GRATIS 🎉" : fmt(SHIPPING_COST);
+  document.getElementById("cartTotal").textContent = fmt(total);
+  document.getElementById("shippingProgress").style.width = progress + "%";
+
+  const remaining = FREE_SHIPPING - subtotal;
+  const msgEl = document.getElementById("shippingMsg");
+  if (freeShip) {
+    msgEl.innerHTML = `🎉 <span class="highlight">¡Felicidades! Tienes envío gratis</span>`;
+  } else {
+    msgEl.innerHTML = `Te faltan <span class="highlight">${fmt(remaining)}</span> para obtener envío gratis`;
+  }
+}
+
+function openCart() {
+  document.getElementById("cartDrawer").classList.add("open");
+  document.getElementById("overlay").classList.add("open");
+}
+function closeCart() {
+  document.getElementById("cartDrawer").classList.remove("open");
+  document.getElementById("overlay").classList.remove("open");
+}
+
+// ── PAYPAL ───────────────────────────────────────────────────────
+
+
+// ── SEARCH ───────────────────────────────────────────────────────
+document.getElementById("catalogSearch").addEventListener("input", renderProducts);
+document.getElementById("searchToggle").addEventListener("click", () => {
+  const s = document.getElementById("navSearch");
+  s.classList.toggle("open");
+  if (s.classList.contains("open")) s.focus();
+});
+document.getElementById("navSearch").addEventListener("input", e => {
+  document.getElementById("catalogSearch").value = e.target.value;
+  renderProducts();
+  document.getElementById("catalogo").scrollIntoView({ behavior:"smooth" });
+});
+
+// ── EVENTS ───────────────────────────────────────────────────────
+document.getElementById("cartToggle").addEventListener("click", openCart);
+document.getElementById("cartClose").addEventListener("click", closeCart);
+document.getElementById("modalClose").addEventListener("click", closeModal);
+document.getElementById("overlay").addEventListener("click", () => { closeCart(); closeModal(); });
+document.getElementById("modalOverlay").addEventListener("click", e => { if(e.target === document.getElementById("modalOverlay")) closeModal(); });
+
+
+// ── POPULAR SLIDER ──────────────────────────────────────────────
+function imgOrEmoji(p, cls="") {
+  if (p.imgUrl) {
+    return `<img src="${p.imgUrl}" alt="${p.name}" loading="lazy" />`;
+  }
+  return p.emoji;
+}
+
+function renderPopular() {
+  const track = document.getElementById("sliderTrack");
+  const popular = perfumes.filter(p => p.popular);
+  track.innerHTML = popular.map((p, i) => `
+    <div class="slider-card" data-id="${p.id}">
+      <div class="slider-img${p.imgUrl?" has-photo":""}">
+        ${p.imgUrl ? `<img src="${p.imgUrl}" alt="${p.name}" loading="lazy"/>` : p.emoji}
+        <span class="slider-rank">#${i+1}</span>
+      </div>
+      <div class="slider-info">
+        <div class="slider-brand">${p.brand}</div>
+        <div class="slider-name">${p.name}</div>
+        <div class="slider-price">Desde <span>${fmt(p.prices[2])}</span> · 2 ml</div>
+      </div>
+    </div>
+  `).join("");
+  track.querySelectorAll(".slider-card").forEach(card => {
+    card.addEventListener("click", () => openModal(parseInt(card.dataset.id)));
+  });
+}
+
+// Arrow controls
+const sliderWrap = document.getElementById("sliderWrap");
+document.getElementById("sliderLeft").addEventListener("click", () => {
+  sliderWrap.scrollBy({ left: -520, behavior: "smooth" });
+});
+document.getElementById("sliderRight").addEventListener("click", () => {
+  sliderWrap.scrollBy({ left: 520, behavior: "smooth" });
+});
+
+// Drag to scroll
+let isDragging = false, startX, scrollLeft;
+sliderWrap.addEventListener("mousedown", e => {
+  isDragging = true; startX = e.pageX - sliderWrap.offsetLeft;
+  scrollLeft = sliderWrap.scrollLeft;
+  sliderWrap.classList.add("grabbing");
+});
+sliderWrap.addEventListener("mouseleave", () => { isDragging = false; sliderWrap.classList.remove("grabbing"); });
+sliderWrap.addEventListener("mouseup", () => { isDragging = false; sliderWrap.classList.remove("grabbing"); });
+sliderWrap.addEventListener("mousemove", e => {
+  if (!isDragging) return; e.preventDefault();
+  const x = e.pageX - sliderWrap.offsetLeft;
+  sliderWrap.scrollLeft = scrollLeft - (x - startX) * 1.2;
+});
+
+
+// ── ADMIN PANEL ──────────────────────────────────────────────────
+let adminTab = "perfumes";
+let editingId = null;
+
+function openAdmin() {
+  document.getElementById("adminPanel").classList.add("open");
+  document.getElementById("adminOverlay").classList.add("open");
+  renderAdminTab();
+}
+function closeAdmin() {
+  document.getElementById("adminPanel").classList.remove("open");
+  document.getElementById("adminOverlay").classList.remove("open");
+}
+
+// ── ADMIN PASSWORD ──────────────────────────────────────────────
+const ADMIN_PASSWORD = "6]_12xO9iSG+"; // ← Cambia esto por tu contraseña secreta
+let adminUnlocked = false;
+
+document.getElementById("adminToggle").addEventListener("click", () => {
+  if (adminUnlocked) { openAdmin(); return; }
+  document.getElementById("pwModal").style.display = "flex";
+  document.getElementById("pwInput").value = "";
+  setTimeout(() => document.getElementById("pwInput").focus(), 100);
+});
+
+document.getElementById("pwConfirm").addEventListener("click", () => {
+  const val = document.getElementById("pwInput").value;
+  if (val === ADMIN_PASSWORD) {
+    adminUnlocked = true;
+    document.getElementById("pwModal").style.display = "none";
+    openAdmin();
+    showToast("Panel desbloqueado ✓");
+  } else {
+    document.getElementById("pwError").style.display = "block";
+    document.getElementById("pwInput").value = "";
+    document.getElementById("pwInput").focus();
+  }
+});
+
+document.getElementById("pwCancel").addEventListener("click", () => {
+  document.getElementById("pwModal").style.display = "none";
+});
+
+document.getElementById("pwInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") document.getElementById("pwConfirm").click();
+  if (e.key === "Escape") document.getElementById("pwCancel").click();
+});
+document.getElementById("adminClose").addEventListener("click", closeAdmin);
+document.getElementById("adminOverlay").addEventListener("click", closeAdmin);
+
+document.querySelectorAll(".admin-tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    adminTab = tab.dataset.tab;
+    document.querySelectorAll(".admin-tab").forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+    renderAdminTab();
+  });
+});
+
+function renderAdminTab() {
+  const body = document.getElementById("adminBody");
+  if (adminTab === "perfumes") renderAdminPerfumes(body);
+  else if (adminTab === "agregar") renderAdminForm(body, editingId);
+  else renderAdminSettings(body);
+}
+
+function renderAdminPerfumes(body) {
+  body.innerHTML = `
+    <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
+      <button class="btn-save-perfume" style="width:auto;padding:10px 20px" id="adminNewBtn">
+        <i class="fas fa-plus" style="margin-right:6px"></i>Nuevo perfume
+      </button>
+    </div>
+    <div class="admin-perfume-list">
+      ${perfumes.map(p => `
+        <div class="admin-perfume-item">
+          <div class="admin-item-emoji">
+            ${p.imgUrl ? `<img src="${p.imgUrl}" alt="${p.name}"/>` : p.emoji}
+          </div>
+          <div class="admin-item-info">
+            <div class="admin-item-brand">${p.brand}</div>
+            <div class="admin-item-name">${p.name}</div>
+          </div>
+          <button class="admin-popular-toggle${p.popular?" on":""}" data-id="${p.id}" title="Popular"></button>
+          <div class="admin-item-actions">
+            <button class="admin-btn-sm admin-btn-edit" data-id="${p.id}"><i class="fas fa-pen"></i></button>
+            <button class="admin-btn-sm admin-btn-del" data-id="${p.id}"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+  body.querySelector("#adminNewBtn").addEventListener("click", () => {
+    editingId = null;
+    adminTab = "agregar";
+    document.querySelectorAll(".admin-tab").forEach(t => t.classList.toggle("active", t.dataset.tab==="agregar"));
+    renderAdminTab();
+  });
+  body.querySelectorAll(".admin-btn-edit").forEach(btn => {
+    btn.addEventListener("click", () => {
+      editingId = parseInt(btn.dataset.id);
+      adminTab = "agregar";
+      document.querySelectorAll(".admin-tab").forEach(t => t.classList.toggle("active", t.dataset.tab==="agregar"));
+      renderAdminTab();
+    });
+  });
+  body.querySelectorAll(".admin-btn-del").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (!confirm("¿Eliminar este perfume del catálogo?")) return;
+      const idx = perfumes.findIndex(p => p.id === parseInt(btn.dataset.id));
+      if (idx > -1) { perfumes.splice(idx, 1); renderAdminTab(); renderPopular(); renderFilters(); renderProducts(); showToast("Perfume eliminado"); }
+    });
+  });
+  body.querySelectorAll(".admin-popular-toggle").forEach(toggle => {
+    toggle.addEventListener("click", () => {
+      const p = perfumes.find(x => x.id === parseInt(toggle.dataset.id));
+      if (!p) return;
+      p.popular = !p.popular;
+      toggle.classList.toggle("on", p.popular);
+      renderPopular();
+      showToast(p.popular ? `${p.name} agregado a populares` : `${p.name} removido de populares`);
+    });
+  });
+}
+
+function renderAdminForm(body, editId) {
+  const p = editId ? perfumes.find(x => x.id === editId) : null;
+  const title = p ? "Editar perfume" : "Agregar nuevo perfume";
+  body.innerHTML = `
+    <h3 style="font-size:1rem;margin-bottom:1.5rem;color:var(--text-sub)">${title}</h3>
+    <div class="admin-form" id="adminForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Nombre del perfume</label>
+          <input class="form-input" id="f-name" placeholder="ej. Bleu de Chanel" value="${p?p.name:''}"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Marca</label>
+          <input class="form-input" id="f-brand" placeholder="ej. Chanel" value="${p?p.brand:''}"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Familia olfativa</label>
+          <input class="form-input" id="f-family" placeholder="ej. Floral Amaderada" value="${p?p.family:''}" style="display:none"/>
+          <small style="color:var(--text-muted);font-size:0.72rem">Campo oculto — no se muestra al público</small>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Emoji (sin foto)</label>
+          <input class="form-input" id="f-emoji" placeholder="🌸" value="${p?p.emoji:'🌸'}"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Tipo de perfume</label>
+          <select class="form-select" id="f-tipo">
+            <option value="diseñador" ${p&&p.tipo==="diseñador"?"selected":""}>🏛️ Diseñador</option>
+            <option value="nicho"     ${p&&p.tipo==="nicho"?"selected":""}>💎 Nicho</option>
+            <option value="árabe"     ${p&&p.tipo==="árabe"?"selected":""}>🕌 Árabe</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Badge (opcional)</label>
+          <input class="form-input" id="f-badge" placeholder="ej. Bestseller" value="${p&&p.badge?p.badge:''}"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descripción</label>
+        <textarea class="form-textarea" id="f-desc" placeholder="Describe el perfume...">${p?p.desc:''}</textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notas de salida</label>
+        <input class="form-input" id="f-top" placeholder="ej. Bergamota, Limón, Menta" value="${p?p.top:''}"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Notas de corazón</label>
+          <input class="form-input" id="f-heart" placeholder="ej. Rosa, Jazmín" value="${p?p.heart:''}"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notas de fondo</label>
+          <input class="form-input" id="f-base" placeholder="ej. Cedro, Vainilla" value="${p?p.base:''}"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Precios por tamaño (MXN)</label>
+        <div class="price-row">
+          <div class="price-input-wrap">
+            <span class="price-chip-label">2 ml</span>
+            <input class="form-input" id="f-p2" type="number" placeholder="149" value="${p?p.prices[2]:''}"/>
+          </div>
+          <div class="price-input-wrap">
+            <span class="price-chip-label">5 ml</span>
+            <input class="form-input" id="f-p5" type="number" placeholder="299" value="${p?p.prices[5]:''}"/>
+          </div>
+          <div class="price-input-wrap">
+            <span class="price-chip-label">10 ml</span>
+            <input class="form-input" id="f-p10" type="number" placeholder="499" value="${p?p.prices[10]:''}"/>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Foto del perfume</label>
+        <div class="photo-upload-area" id="uploadArea">
+          <input type="file" accept="image/*" id="f-file"/>
+          <div class="photo-upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+          <div class="photo-upload-text">Arrastra tu foto aquí o <span>selecciona un archivo</span></div>
+        </div>
+        <img class="photo-preview" id="photoPreview" ${p&&p.imgUrl?`src="${p.imgUrl}" style="display:block"`:''}/>
+        <div class="photo-url-divider">o pega una URL</div>
+        <input class="form-input" id="f-imgUrl" placeholder="https://i.ibb.co/..." value="${p?p.imgUrl:''}"/>
+      </div>
+      <div class="form-group" style="display:flex;align-items:center;gap:0.8rem">
+        <button class="admin-popular-toggle${p&&p.popular?" on":""}" id="f-popular" style="flex-shrink:0"></button>
+        <span style="font-size:0.82rem;color:var(--text-sub)">Mostrar en sección "Más Populares"</span>
+      </div>
+      <button class="btn-save-perfume" id="saveBtn">${p ? "Guardar cambios" : "Agregar al catálogo"}</button>
+      <button class="btn-cancel-form" id="cancelBtn">Cancelar</button>
+    </div>
+  `;
+
+  // File preview
+  const fileInput = body.querySelector("#f-file");
+  const preview = body.querySelector("#photoPreview");
+  const urlInput = body.querySelector("#f-imgUrl");
+  fileInput.addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      preview.src = ev.target.result;
+      preview.style.display = "block";
+      urlInput.value = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+  urlInput.addEventListener("input", () => {
+    if (urlInput.value) { preview.src = urlInput.value; preview.style.display = "block"; }
+    else { preview.style.display = "none"; }
+  });
+
+  // Popular toggle
+  const popToggle = body.querySelector("#f-popular");
+  let isPopular = p ? p.popular : false;
+  popToggle.classList.toggle("on", isPopular);
+  popToggle.addEventListener("click", () => { isPopular = !isPopular; popToggle.classList.toggle("on", isPopular); });
+
+  // Save
+  body.querySelector("#saveBtn").addEventListener("click", () => {
+    const name = body.querySelector("#f-name").value.trim();
+    const brand = body.querySelector("#f-brand").value.trim();
+    if (!name || !brand) { showToast("El nombre y la marca son obligatorios"); return; }
+    const data = {
+      id: p ? p.id : (Math.max(...perfumes.map(x=>x.id))+1),
+      brand, name,
+      family: body.querySelector("#f-family").value.trim() || "Sin clasificar",
+      emoji: body.querySelector("#f-emoji").value.trim() || "🌸",
+      badge: null, popular: isPopular,
+      imgUrl: body.querySelector("#f-imgUrl").value.trim(),
+      desc: body.querySelector("#f-desc").value.trim(),
+      top: body.querySelector("#f-top").value.trim(),
+      heart: body.querySelector("#f-heart").value.trim(),
+      base: body.querySelector("#f-base").value.trim(),
+      prices: {
+        2: parseInt(body.querySelector("#f-p2").value) || 149,
+        5: parseInt(body.querySelector("#f-p5").value) || 299,
+        10: parseInt(body.querySelector("#f-p10").value) || 499
+      }
+    };
+    if (p) { Object.assign(p, data); showToast(`"${name}" actualizado`); }
+    else { perfumes.push(data); showToast(`"${name}" agregado al catálogo`); }
+    editingId = null;
+    adminTab = "perfumes";
+    document.querySelectorAll(".admin-tab").forEach(t => t.classList.toggle("active", t.dataset.tab==="perfumes"));
+    renderAdminTab(); renderPopular(); renderFilters(); renderProducts();
+  });
+  body.querySelector("#cancelBtn").addEventListener("click", () => {
+    editingId = null; adminTab = "perfumes";
+    document.querySelectorAll(".admin-tab").forEach(t => t.classList.toggle("active", t.dataset.tab==="perfumes"));
+    renderAdminTab();
+  });
+}
+
+function renderAdminSettings(body) {
+  body.innerHTML = `
+    <div class="settings-group">
+      <div class="settings-group-title">Tienda</div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <h4>Nombre de la tienda</h4>
+          <p>Aparece en el navbar y footer</p>
+        </div>
+        <input class="form-input" style="width:160px" value="Herod Decants"/>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <h4>Envío gratis desde</h4>
+          <p>Monto mínimo en MXN</p>
+        </div>
+        <input class="form-input" id="s-freeShip" style="width:100px" type="number" value="${FREE_SHIPPING}"/>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <h4>Costo de envío estándar</h4>
+          <p>En MXN cuando no aplica gratis</p>
+        </div>
+        <input class="form-input" id="s-shipCost" style="width:100px" type="number" value="${SHIPPING_COST}"/>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <h4>WhatsApp de contacto</h4>
+          <p>Con lada internacional (52...)</p>
+        </div>
+        <input class="form-input" style="width:160px" placeholder="524773846682"/>
+      </div>
+    </div>
+    <div class="settings-group">
+      <div class="settings-group-title">Datos</div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <h4>Exportar catálogo</h4>
+          <p>Descarga tu catálogo en JSON</p>
+        </div>
+        <button class="admin-export-btn" id="exportBtn"><i class="fas fa-download" style="margin-right:5px"></i>Exportar</button>
+      </div>
+    </div>
+    <button class="btn-save-perfume" id="saveSettings">Guardar ajustes</button>
+  `;
+  body.querySelector("#exportBtn").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(perfumes, null, 2)], {type:"application/json"});
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+    a.download = "herod-decants-catalogo.json"; a.click();
+    showToast("Catálogo exportado");
+  });
+  body.querySelector("#saveSettings").addEventListener("click", () => {
+    showToast("Ajustes guardados");
+  });
+}
+
+
+// ── EMAILJS REGISTRATION ─────────────────────────────────────────
+// 1. Crea cuenta gratis en emailjs.com
+// 2. Crea un Email Service (Gmail recomendado) y copia el Service ID
+// 3. Crea un Email Template con las variables: {{to_name}}, {{to_email}}, {{discount_code}}
+// 4. Copia tu Public Key de Account > API Keys
+// Reemplaza los 3 valores de abajo:
+const EJS_SERVICE_ID  = "TU_SERVICE_ID";   // ej. "service_abc123"
+const EJS_TEMPLATE_ID = "TU_TEMPLATE_ID";  // ej. "template_xyz456"
+const EJS_PUBLIC_KEY  = "TU_PUBLIC_KEY";   // ej. "aBcDeFgHiJkLmN"
+const DISCOUNT_CODE   = "HEROD10";
+
+// Show register modal after 8 seconds if user hasn't registered
+const hasRegistered = localStorage.getItem("herod_registered");
+if (!hasRegistered) {
+  setTimeout(() => {
+    document.getElementById("registerModal").classList.add("open");
+  }, 8000);
+}
+
+// Also add a "Get discount" button to promo section
+const promoCards = document.querySelectorAll(".promo-card");
+if (promoCards.length > 0) {
+  const discountBtn = document.createElement("button");
+  discountBtn.className = "btn-outline";
+  discountBtn.style.cssText = "margin-top:1.2rem;width:100%;justify-content:center";
+  discountBtn.innerHTML = '<i class="fas fa-gift"></i> Obtener mi código';
+  discountBtn.addEventListener("click", () => {
+    document.getElementById("registerModal").classList.add("open");
+  });
+  promoCards[0].appendChild(discountBtn);
+}
+
+document.getElementById("regSkip").addEventListener("click", () => {
+  document.getElementById("registerModal").classList.remove("open");
+});
+
+document.getElementById("regSubmit").addEventListener("click", async () => {
+  const name  = document.getElementById("regName").value.trim();
+  const email = document.getElementById("regEmail").value.trim();
+  const errEl = document.getElementById("regError");
+  errEl.style.display = "none";
+
+  if (!name) { errEl.textContent = "Por favor escribe tu nombre."; errEl.style.display = "block"; return; }
+  if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) { errEl.textContent = "Por favor escribe un correo válido."; errEl.style.display = "block"; return; }
+
+  const btn = document.getElementById("regSubmit");
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:6px"></i>Enviando...';
+
+  try {
+    if (EJS_PUBLIC_KEY !== "TU_PUBLIC_KEY") {
+      // Real EmailJS send
+      emailjs.init(EJS_PUBLIC_KEY);
+      await emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
+        to_name: name,
+        to_email: email,
+        discount_code: DISCOUNT_CODE,
+        store_name: "Herod Decants"
+      });
+    }
+    // Mark as registered
+    localStorage.setItem("herod_registered", email);
+    // Show success
+    document.getElementById("regFormView").style.display = "none";
+    document.getElementById("regEmailConfirm").textContent = email;
+    document.getElementById("regSuccessView").style.display = "block";
+    showToast("¡Código enviado a tu correo!");
+  } catch(err) {
+    errEl.textContent = "Hubo un error al enviar. Intenta de nuevo.";
+    errEl.style.display = "block";
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-envelope" style="margin-right:6px"></i>Recibir mi código';
+  }
+});
+
+// Code display removed - code sent via email only
+
+document.getElementById("regClose").addEventListener("click", () => {
+  document.getElementById("registerModal").classList.remove("open");
+});
+
+
+// ── CATEGORY FILTER ──────────────────────────────────────────────
+let activeTipo = "todos";
+let currentPage = 1;
+
+function initCategoryButtons() {
+  // Set counts
+  const counts = { todos: perfumes.length };
+  perfumes.forEach(p => { counts[p.tipo] = (counts[p.tipo]||0)+1; });
+  const labelMap = { "diseñador":"disenador", "nicho":"nicho", "árabe":"arabe" };
+  Object.entries(labelMap).forEach(([tipo, id]) => {
+    const el = document.getElementById("count-"+id);
+    if (el) el.textContent = (counts[tipo]||0) + " perfumes";
+  });
+  document.getElementById("count-todos").textContent = perfumes.length + " perfumes";
+
+  document.querySelectorAll(".cat-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeTipo = btn.dataset.tipo;
+      document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeFilter = "Todos";
+      currentPage = 1;
+      renderFilters();
+      renderProducts();
+      // Scroll to catalog
+      document.getElementById("catalogo").scrollIntoView({ behavior:"smooth", block:"start" });
+    });
+  });
+}
+
+// Override renderProducts to also filter by tipo
+const _origRenderProducts = renderProducts;
+function renderProducts() {
+  const query = (document.getElementById("catalogSearch").value || "").toLowerCase();
+  const grid  = document.getElementById("productsGrid");
+  const bar   = document.getElementById("paginationBar");
+  const PER_PAGE = 12;
+
+  const filtered = perfumes.filter(p => {
+    const matchBrand  = activeFilter === "Todos" || p.brand === activeFilter;
+    const matchTipo   = activeTipo === "todos" || p.tipo === activeTipo;
+    const matchSearch = !query || p.name.toLowerCase().includes(query)
+                        || p.brand.toLowerCase().includes(query)
+                        || p.family.toLowerCase().includes(query);
+    return matchBrand && matchTipo && matchSearch;
+  });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+  if (currentPage > totalPages) currentPage = 1;
+  const start  = (currentPage - 1) * PER_PAGE;
+  const paged  = filtered.slice(start, start + PER_PAGE);
+
+  const tipoClass = { "diseñador":"tipo-disenador", "nicho":"tipo-nicho", "árabe":"tipo-arabe" };
+  const tipoLabel = { "diseñador":"Diseñador", "nicho":"Nicho", "árabe":"Árabe" };
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="no-results"><i class="fas fa-search"></i><p>No se encontraron perfumes</p></div>`;
+    bar.innerHTML = "";
+    return;
+  }
+
+  grid.innerHTML = paged.map(p => `
+    <div class="product-card" data-id="${p.id}">
+      <div class="product-img-wrap">
+        <div class="product-img-inner${p.imgUrl ? " has-photo" : ""}">
+          ${p.imgUrl
+            ? `<img src="${p.imgUrl}" alt="${p.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0"/>`
+            : p.emoji}
+        </div>
+        ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ""}
+        ${p.tipo  ? `<span class="tipo-badge ${tipoClass[p.tipo]||""}">${tipoLabel[p.tipo]||p.tipo}</span>` : ""}
+      </div>
+      <div class="product-info">
+        <div class="product-brand">${p.brand}</div>
+        <h3 class="product-name">${p.name}</h3>
+        <div class="product-prices">
+          <div class="price-chip">2ml <span>${fmt(p.prices[2])}</span></div>
+          <div class="price-chip">5ml <span>${fmt(p.prices[5])}</span></div>
+          <div class="price-chip">10ml <span>${fmt(p.prices[10])}</span></div>
+        </div>
+        <button class="btn-add-quick">Ver detalle</button>
+      </div>
+    </div>
+  `).join("");
+
+  grid.querySelectorAll(".product-card").forEach(card => {
+    card.addEventListener("click", () => openModal(parseInt(card.dataset.id)));
+  });
+
+  // Render pagination bar
+  if (totalPages <= 1) { bar.innerHTML = ""; return; }
+
+  let html = `<button class="page-btn" id="pgPrev" ${currentPage===1?"disabled":""}>
+    <i class="fas fa-chevron-left"></i></button>`;
+
+  for (let i = 1; i <= totalPages; i++) {
+    if (totalPages > 7 && i > 2 && i < totalPages - 1 && Math.abs(i - currentPage) > 1) {
+      if (i === 3 || i === totalPages - 2) html += `<span class="page-info">…</span>`;
+      continue;
+    }
+    html += `<button class="page-btn ${i===currentPage?"active":""}" data-page="${i}">${i}</button>`;
+  }
+
+  html += `<button class="page-btn" id="pgNext" ${currentPage===totalPages?"disabled":""}>
+    <i class="fas fa-chevron-right"></i></button>`;
+  html += `<span class="page-info">${filtered.length} perfumes</span>`;
+
+  bar.innerHTML = html;
+
+  bar.querySelectorAll("[data-page]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentPage = parseInt(btn.dataset.page);
+      renderProducts();
+      document.getElementById("catalogo").scrollIntoView({ behavior:"smooth", block:"start" });
+    });
+  });
+  const prev = bar.querySelector("#pgPrev");
+  const next = bar.querySelector("#pgNext");
+  if (prev) prev.addEventListener("click", () => { currentPage--; renderProducts(); document.getElementById("catalogo").scrollIntoView({behavior:"smooth",block:"start"}); });
+  if (next) next.addEventListener("click", () => { currentPage++; renderProducts(); document.getElementById("catalogo").scrollIntoView({behavior:"smooth",block:"start"}); });
+}
+
+
+// Promo register button
+const promoRegBtn = document.getElementById("promoRegisterBtn");
+if (promoRegBtn) {
+  promoRegBtn.addEventListener("click", () => {
+    document.getElementById("registerModal").classList.add("open");
+  });
+}
+initCategoryButtons();
+
+// ── INIT ─────────────────────────────────────────────────────────
+renderPopular();
+renderFilters();
+renderProducts();
+renderCart();
+
+// ── MERCADOPAGO ──────────────────────────────────────────────────
+const MP_PUBLIC_KEY = "APP_USR-d39a1b16-c658-4be8-81f5-0a55c309c96a";
+let mp = null;
+let mpBrick = null;
+
+async function initMP() {
+  if (mp) return;
+  mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "es-MX" });
+}
+
+document.getElementById("mpBtn").addEventListener("click", async () => {
+  if (!cart.length) { showToast("Tu carrito está vacío"); return; }
+
+  await initMP();
+
+  // Build order description
+  const items = cart.map(i => `${i.name} ${i.size}ml x${i.qty}`).join(", ");
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const discount = couponApplied ? Math.round(total * 0.10) : 0;
+  const finalTotal = total - discount + (total >= FREE_SHIPPING ? 0 : SHIPPING_COST);
+
+  // Show payment container
+  const container = document.getElementById("mpContainer");
+  container.style.cssText = "margin-top:1rem;";
+  container.innerHTML = "<p style='font-size:0.75rem;color:var(--text-sub);margin-bottom:0.5rem;text-align:center'><i class='fas fa-spinner fa-spin'></i> Cargando opciones de pago...</p>";
+
+  try {
+    const bricksBuilder = mp.bricks();
+    if (mpBrick) { mpBrick.unmount(); }
+
+    mpBrick = await bricksBuilder.create("payment", "mpContainer", {
+      initialization: {
+        amount: finalTotal,
+        preferenceId: null,
+      },
+      customization: {
+        paymentMethods: {
+          creditCard: "all",
+          debitCard: "all",
+          ticket: "all",
+        },
+        visual: {
+          style: {
+            theme: "dark",
+            customVariables: {
+              baseColor: "#c9a96e",
+              baseColorFirstVariant: "#b8935a",
+              baseColorSecondVariant: "#a07840",
+              fontSizeBase: "14px",
+            }
+          }
+        }
+      },
+      callbacks: {
+        onReady: () => {
+          container.querySelector("p") && (container.querySelector("p").style.display = "none");
+        },
+        onSubmit: async ({ selectedPaymentMethod, formData }) => {
+          // Send to your backend or handle via MercadoPago Checkout Pro
+          // For now, show WhatsApp confirmation flow
+          showToast("Procesando pago...");
+          const waMsg = encodeURIComponent(
+            "Hola, acabo de realizar un pago por:\n" +
+            items + "\n" +
+            "Total: $" + finalTotal.toLocaleString("es-MX") + " MXN\n" +
+            "Por favor confirma mi pedido."
+          );
+          const waNumber = document.querySelector("a[href*='wa.me']")?.href.match(/wa\.me\/(\d+)/)?.[1] || "521234567890";
+          setTimeout(() => {
+            window.open("https://wa.me/" + waNumber + "?text=" + waMsg, "_blank");
+          }, 1500);
+        },
+        onError: (error) => {
+          console.error(error);
+          showToast("Error al cargar el pago. Intenta de nuevo.");
+        },
+      },
+    });
+  } catch(e) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:1rem">
+        <p style="font-size:0.78rem;color:var(--text-sub);margin-bottom:1rem">
+          Para completar tu compra, escríbenos por WhatsApp con tu pedido:
+        </p>
+        <a href="https://wa.me/?text=${encodeURIComponent('Hola, quiero pedir: ' + items + ' - Total: $' + finalTotal.toLocaleString('es-MX') + ' MXN')}"
+           target="_blank" class="btn-primary" style="display:inline-flex;gap:0.5rem;padding:12px 24px">
+          <i class="fab fa-whatsapp"></i> Finalizar por WhatsApp
+        </a>
+      </div>`;
+  }
+});
+
+}); // end DOMContentLoaded
+</script>
+
+
+
+<!-- PASSWORD MODAL -->
+<div id="pwModal" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);align-items:center;justify-content:center">
+  <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;padding:2.5rem;width:min(360px,90vw);text-align:center">
+    <div style="font-size:2rem;margin-bottom:1rem">🔒</div>
+    <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;color:#f0ece4;margin-bottom:0.5rem">Área de administración</h3>
+    <p style="font-size:0.78rem;color:#8a7d6e;margin-bottom:1.5rem">Ingresa tu contraseña para continuar</p>
+    <input id="pwInput" type="password" placeholder="Contraseña" style="width:100%;background:#141414;border:1px solid #2a2a2a;color:#f0ece4;padding:11px 14px;border-radius:4px;font-size:0.9rem;outline:none;margin-bottom:0.6rem;box-sizing:border-box;font-family:'Inter',sans-serif"/>
+    <p id="pwError" style="display:none;color:#e55;font-size:0.75rem;margin-bottom:0.8rem">Contraseña incorrecta. Intenta de nuevo.</p>
+    <div style="display:flex;gap:0.7rem;margin-top:0.5rem">
+      <button id="pwCancel" style="flex:1;padding:11px;background:none;border:1px solid #2a2a2a;color:#8a7d6e;border-radius:4px;cursor:pointer;font-size:0.78rem;font-family:'Inter',sans-serif">Cancelar</button>
+      <button id="pwConfirm" style="flex:1;padding:11px;background:#c9a96e;border:none;color:#0a0a0a;border-radius:4px;cursor:pointer;font-size:0.78rem;font-weight:600;font-family:'Inter',sans-serif">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<!-- REGISTER MODAL -->
+<div class="register-modal-overlay" id="registerModal">
+  <div class="register-modal">
+    <!-- Form view -->
+    <div id="regFormView">
+      <div class="register-icon"><i class="fas fa-gift"></i></div>
+      <h2>10% en tu primera compra</h2>
+      <p class="reg-sub">Regístrate y recibe tu código de descuento exclusivo directo en tu correo.</p>
+      
+      <div class="reg-form">
+        <input class="reg-input" id="regName" type="text" placeholder="Tu nombre" autocomplete="name"/>
+        <input class="reg-input" id="regEmail" type="email" placeholder="Tu correo electrónico" autocomplete="email"/>
+        <div class="reg-error" id="regError"></div>
+        <button class="btn-register" id="regSubmit">
+          <i class="fas fa-envelope" style="margin-right:6px"></i>Recibir mi código
+        </button>
+      </div>
+      <button class="reg-skip" id="regSkip">Ahora no, seguir navegando</button>
+    </div>
+    <!-- Success view -->
+    <div class="reg-success" id="regSuccessView">
+      <div class="reg-success-icon">🎉</div>
+      <h3>¡Código enviado!</h3>
+      <p>Revisa tu correo <strong id="regEmailConfirm"></strong>. En breve recibirás tu código exclusivo de bienvenida. 🎉</p>
+      <button class="btn-register" id="regClose" style="margin-top:1.2rem">
+        <i class="fas fa-compass" style="margin-right:6px"></i>Explorar colección
+      </button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
