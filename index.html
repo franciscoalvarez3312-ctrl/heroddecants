@@ -1,5 +1,4 @@
-
-  emailjs.init('HUJtY9ND4ZeSJB1UR');<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -1216,28 +1215,7 @@
     .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
     .page-info { font-size: 0.75rem; color: var(--text-muted); padding: 0 0.5rem; }
 
-  
-.btn-checkout {
-  width:100%;background:#009ee3;color:white;border:none;padding:16px;
-  border-radius:var(--radius);font-size:0.92rem;font-weight:700;
-  display:flex;align-items:center;justify-content:center;gap:0.6rem;
-  transition:background var(--transition),transform var(--transition);
-  margin-bottom:0.8rem;cursor:pointer;font-family:Inter,sans-serif;
-}
-.btn-checkout:hover{background:#007bb5;transform:translateY(-1px);}
-.btn-checkout:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
-.btn-paypal {
-  width:100%;background:#ffc439;color:#003087;border:none;padding:16px;
-  border-radius:var(--radius);font-size:0.92rem;font-weight:700;
-  display:flex;align-items:center;justify-content:center;gap:0.6rem;
-  transition:background var(--transition),transform var(--transition);
-  margin-bottom:0.8rem;cursor:pointer;font-family:Inter,sans-serif;
-}
-.btn-paypal:hover{background:#f0b429;transform:translateY(-1px);}
-.btn-paypal:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
-#buyerForm input:focus{border-color:var(--gold);}
-</style>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  </style>
 </head>
 <body>
 
@@ -1524,29 +1502,11 @@
       <div class="cart-row"><span>Envío</span><span id="cartShipping">$99</span></div>
       <div class="cart-row total"><span>Total</span><span id="cartTotal">$0</span></div>
     </div>
-    <!-- BUYER FORM -->
-<div id="buyerForm" style="margin-bottom:1rem;">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin-bottom:0.6rem;">
-    <input id="buyerName" type="text" placeholder="Nombre *" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:0.82rem;font-family:Inter,sans-serif;outline:none;width:100%;box-sizing:border-box;">
-    <input id="buyerPhone" type="tel" placeholder="Teléfono *" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:0.82rem;font-family:Inter,sans-serif;outline:none;width:100%;box-sizing:border-box;">
-  </div>
-  <input id="buyerEmail" type="email" placeholder="Correo electrónico *" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:0.82rem;font-family:Inter,sans-serif;outline:none;width:100%;box-sizing:border-box;margin-bottom:0.6rem;">
-  <input id="buyerAddress" type="text" placeholder="Dirección completa *" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:0.82rem;font-family:Inter,sans-serif;outline:none;width:100%;box-sizing:border-box;margin-bottom:0.6rem;">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;">
-    <input id="buyerCity" type="text" placeholder="Ciudad *" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:0.82rem;font-family:Inter,sans-serif;outline:none;width:100%;box-sizing:border-box;">
-    <input id="buyerZip" type="text" placeholder="Código postal *" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:0.82rem;font-family:Inter,sans-serif;outline:none;width:100%;box-sizing:border-box;">
-  </div>
-</div>
-<button class="btn-paypal" id="paypalBtn">
-  <i class="fab fa-paypal" style="font-size:1.3rem"></i>
-  <span>Pagar con <strong>PayPal</strong></span>
-</button>
-<button class="btn-checkout" id="mpBtn">
-  <i class="fas fa-credit-card" style="font-size:1.1rem"></i>
-  <span>Pagar con <strong>Tarjeta / OXXO</strong></span>
-</button>
-<div id="mpContainer"></div>
-<p class="secure-note"><i class="fas fa-lock"></i>&nbsp;Pago 100% seguro · SSL encriptado</p>
+    <button class="btn-checkout" id="mpBtn">
+          <i class="fas fa-credit-card"></i> Pagar con tarjeta / OXXO
+        </button>
+        <div id="mpContainer"></div>
+    <p class="secure-note"><i class="fas fa-lock"></i>&nbsp;Pago 100% seguro · Protegido por PayPal</p>
   </div>
 </div>
 
@@ -1595,15 +1555,6 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-  // Clear cart if payment was successful
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get('pago') === 'exitoso') {
-    cart = [];
-    localStorage.removeItem('herod_cart');
-    renderCart();
-    showToast('¡Pago exitoso! Gracias por tu compra 🎉');
-  }
-
 // ── DATA ─────────────────────────────────────────────────────────
 const FREE_SHIPPING = 1499;
 const SHIPPING_COST = 99;
@@ -2164,7 +2115,7 @@ const perfumes = [
 ];
 
 // ── STATE ────────────────────────────────────────────────────────
-let cart = JSON.parse(localStorage.getItem("herod_cart") || "[]");
+let cart = [];
 let activeFilter = "Todos";
 let currentProduct = null;
 let selectedSize = null;
@@ -2284,7 +2235,6 @@ function updateCartCount() {
 }
 
 function renderCart() {
-    localStorage.setItem("herod_cart", JSON.stringify(cart));
   const body = document.getElementById("cartBody");
   const footer = document.getElementById("cartFooter");
   if (!cart.length) {
@@ -2790,9 +2740,9 @@ function renderAdminSettings(body) {
 // 3. Crea un Email Template con las variables: {{to_name}}, {{to_email}}, {{discount_code}}
 // 4. Copia tu Public Key de Account > API Keys
 // Reemplaza los 3 valores de abajo:
-const EJS_SERVICE_ID = "service_f11f6dc";
-const EJS_TEMPLATE_ID = "template_bn9a0ps";
-const EJS_PUBLIC_KEY = "HUJtY9ND4ZeSJB1UR";
+const EJS_SERVICE_ID = "service_f11f6dc";   // ej. "service_abc123"
+const EJS_TEMPLATE_ID = "template_bn9a0ps";  // ej. "template_xyz456"
+const EJS_PUBLIC_KEY = "HUJtY9ND4ZeSJB1UR";   // ej. "aBcDeFgHiJkLmN"
 const DISCOUNT_CODE   = "HEROD10";
 
 // Show register modal after 8 seconds if user hasn't registered
@@ -2825,40 +2775,39 @@ document.getElementById("regSubmit").addEventListener("click", async () => {
   const email = document.getElementById("regEmail").value.trim();
   const errEl = document.getElementById("regError");
   errEl.style.display = "none";
-  if (!name)  { errEl.textContent = "Por favor escribe tu nombre."; errEl.style.display = "block"; return; }
+
+  if (!name) { errEl.textContent = "Por favor escribe tu nombre."; errEl.style.display = "block"; return; }
   if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) { errEl.textContent = "Por favor escribe un correo válido."; errEl.style.display = "block"; return; }
+
   const btn = document.getElementById("regSubmit");
-  btn.disabled = true; btn.textContent = "Generando cupón...";
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:6px"></i>Enviando...';
+
   try {
-    const res = await fetch("/.netlify/functions/generate-coupon", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, name })
-    });
-    const data = await res.json();
-    if (data.error) {
-      errEl.textContent = data.error; errEl.style.display = "block";
-      btn.disabled = false; btn.textContent = "Obtener mi cupón"; return;
+    if (EJS_PUBLIC_KEY !== "") {
+      // Real EmailJS send
+      emailjs.init(EJS_PUBLIC_KEY);
+      await emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
+        to_name: name,
+        to_email: email,
+        discount_code: DISCOUNT_CODE,
+        store_name: "Herod Decants"
+      });
     }
-    emailjs.send("service_f11f6dc", "template_bn9a0ps", {
-      to_email: email, buyer_name: name, buyer_email: email,
-      email_subject: "🎉 Tu cupón de bienvenida - Herod Decants",
-      email_intro: "Gracias por registrarte. Aquí está tu cupón exclusivo:",
-      coupon_code: data.codigo, order_items: "", subtotal: "", shipping: "",
-      total: "", buyer_address: "", buyer_city: "", buyer_zip: "", payment_method: ""
-    }).catch(e => console.error("EmailJS:", e));
-    const codeDisplay = document.getElementById("regCodeDisplay");
-    const emailConfirm = document.getElementById("regEmailConfirm");
-    if (codeDisplay) codeDisplay.textContent = data.codigo;
-    if (emailConfirm) emailConfirm.textContent = email;
-    const regForm = document.querySelector(".reg-form");
-    const regSuccess = document.querySelector(".reg-success");
-    if (regForm) regForm.style.display = "none";
-    if (regSuccess) regSuccess.style.display = "block";
-  } catch(e) {
-    errEl.textContent = "Error al generar el cupón. Intenta de nuevo.";
-    errEl.style.display = "block"; btn.disabled = false; btn.textContent = "Obtener mi cupón";
+    // Mark as registered
+    localStorage.setItem("herod_registered", email);
+    // Show success
+    document.getElementById("regFormView").style.display = "none";
+    document.getElementById("regEmailConfirm").textContent = email;
+    document.getElementById("regSuccessView").style.display = "block";
+    showToast("¡Código enviado a tu correo!");
+  } catch(err) {
+    errEl.textContent = "Hubo un error al enviar. Intenta de nuevo.";
+    errEl.style.display = "block";
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-envelope" style="margin-right:6px"></i>Recibir mi código';
   }
-})
+});
 
 // Code display removed - code sent via email only
 
@@ -3015,79 +2964,87 @@ async function initMP() {
   mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "es-MX" });
 }
 
-
-const EMAILJS_SERVICE         = "service_f11f6dc";
-const EMAILJS_TEMPLATE_ADMIN  = "template_8wi4izg";
-const EMAILJS_TEMPLATE_CLIENT = "template_bn9a0ps";
-
-function sendOrderEmails(buyer, orderItems, subtotal, shipping, total, paymentMethod) {
-  const params = {
-    buyer_name: buyer.name, buyer_email: buyer.email, buyer_phone: buyer.phone,
-    buyer_address: buyer.address, buyer_city: buyer.city, buyer_zip: buyer.zip,
-    order_items: orderItems, subtotal: subtotal.toLocaleString("es-MX"),
-    shipping: shipping.toLocaleString("es-MX"), total: total.toLocaleString("es-MX"),
-    payment_method: paymentMethod
-  };
-  emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE_ADMIN, { ...params, to_email: "heroddecants@gmail.com" }).catch(e => console.error(e));
-  emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE_CLIENT, {
-    ...params, to_email: buyer.email,
-    email_subject: "✅ Tu pedido está confirmado - Herod Decants",
-    email_intro: "Hemos recibido tu pedido. En breve coordinamos tu envío.", coupon_code: ""
-  }).catch(e => console.error(e));
-}
-
-function validateBuyerForm() {
-  const name    = document.getElementById('buyerName').value.trim();
-  const phone   = document.getElementById('buyerPhone').value.trim();
-  const email   = document.getElementById('buyerEmail').value.trim();
-  const address = document.getElementById('buyerAddress').value.trim();
-  const city    = document.getElementById('buyerCity').value.trim();
-  const zip     = document.getElementById('buyerZip').value.trim();
-  if (!name||!phone||!email||!address||!city||!zip) { showToast('Por favor completa todos tus datos de envío'); return null; }
-  if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) { showToast('Ingresa un correo válido'); return null; }
-  return { name, phone, email, address, city, zip };
-}
-
-document.getElementById('paypalBtn').addEventListener('click', () => {
-  if (!cart.length) { showToast('Tu carrito está vacío'); return; }
-  const buyer = validateBuyerForm(); if (!buyer) return;
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= FREE_SHIPPING ? 0 : SHIPPING_COST;
-  const total = subtotal + shipping;
-  const orderItems = cart.map(i => i.brand + " - " + i.name + " " + i.size + "ml x" + i.qty + " = $" + (i.price * i.qty).toLocaleString("es-MX") + " MXN").join("\n");
-  sendOrderEmails(buyer, orderItems, subtotal, shipping, total, "PayPal");
-  cart = []; localStorage.removeItem('herod_cart'); renderCart();
-  window.open('https://www.paypal.com/paypalme/TU_USUARIO_PAYPAL/' + total, '_blank');
-});
-
 document.getElementById("mpBtn").addEventListener("click", async () => {
   if (!cart.length) { showToast("Tu carrito está vacío"); return; }
-  const buyer = validateBuyerForm(); if (!buyer) return;
-  const btn = document.getElementById("mpBtn");
-  btn.disabled = true;
-  btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i>&nbsp;Procesando...";
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= FREE_SHIPPING ? 0 : SHIPPING_COST;
-  const total = subtotal + shipping;
-  const orderItems = cart.map(i => i.brand + " - " + i.name + " " + i.size + "ml x" + i.qty + " = $" + (i.price * i.qty).toLocaleString("es-MX") + " MXN").join("\n");
-  const items = cart.map(i => ({ title: i.brand + " - " + i.name + " " + i.size + "ml", quantity: i.qty, unit_price: i.price, currency_id: "MXN" }));
-  if (shipping > 0) items.push({ title: "Envío estándar", quantity: 1, unit_price: shipping, currency_id: "MXN" });
+
+  await initMP();
+
+  // Build order description
+  const items = cart.map(i => `${i.name} ${i.size}ml x${i.qty}`).join(", ");
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const discount = couponApplied ? Math.round(total * 0.10) : 0;
+  const finalTotal = total - discount + (total >= FREE_SHIPPING ? 0 : SHIPPING_COST);
+
+  // Show payment container
+  const container = document.getElementById("mpContainer");
+  container.style.cssText = "margin-top:1rem;";
+  container.innerHTML = "<p style='font-size:0.75rem;color:var(--text-sub);margin-bottom:0.5rem;text-align:center'><i class='fas fa-spinner fa-spin'></i> Cargando opciones de pago...</p>";
+
   try {
-    const res = await fetch("/.netlify/functions/create-preference", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items, payer: { name: buyer.name, email: buyer.email, phone: buyer.phone }, shipments: { receiver_address: { street_name: buyer.address, city_name: buyer.city, zip_code: buyer.zip } } })
+    const bricksBuilder = mp.bricks();
+    if (mpBrick) { mpBrick.unmount(); }
+
+    mpBrick = await bricksBuilder.create("payment", "mpContainer", {
+      initialization: {
+        amount: finalTotal,
+        preferenceId: null,
+      },
+      customization: {
+        paymentMethods: {
+          creditCard: "all",
+          debitCard: "all",
+          ticket: "all",
+        },
+        visual: {
+          style: {
+            theme: "dark",
+            customVariables: {
+              baseColor: "#c9a96e",
+              baseColorFirstVariant: "#b8935a",
+              baseColorSecondVariant: "#a07840",
+              fontSizeBase: "14px",
+            }
+          }
+        }
+      },
+      callbacks: {
+        onReady: () => {
+          container.querySelector("p") && (container.querySelector("p").style.display = "none");
+        },
+        onSubmit: async ({ selectedPaymentMethod, formData }) => {
+          // Send to your backend or handle via MercadoPago Checkout Pro
+          // For now, show WhatsApp confirmation flow
+          showToast("Procesando pago...");
+          const waMsg = encodeURIComponent(
+            "Hola, acabo de realizar un pago por:\n" +
+            items + "\n" +
+            "Total: $" + finalTotal.toLocaleString("es-MX") + " MXN\n" +
+            "Por favor confirma mi pedido."
+          );
+          const waNumber = document.querySelector("a[href*='wa.me']")?.href.match(/wa\.me\/(\d+)/)?.[1] || "521234567890";
+          setTimeout(() => {
+            window.open("https://wa.me/" + waNumber + "?text=" + waMsg, "_blank");
+          }, 1500);
+        },
+        onError: (error) => {
+          console.error(error);
+          showToast("Error al cargar el pago. Intenta de nuevo.");
+        },
+      },
     });
-    const data = await res.json();
-    if (data.init_point) {
-      sendOrderEmails(buyer, orderItems, subtotal, shipping, total, "Tarjeta / OXXO (MercadoPago)");
-      window.location.href = data.init_point;
-    } else { throw new Error("No init_point"); }
   } catch(e) {
-    document.getElementById("mpContainer").innerHTML = "<p style='font-size:0.78rem;color:#e55;text-align:center;margin-top:0.5rem'>Error al conectar. Intenta de nuevo.</p>";
-    btn.disabled = false;
-    btn.innerHTML = "<i class='fas fa-credit-card'></i>&nbsp;<span>Pagar con <strong>Tarjeta / OXXO</strong></span>";
+    container.innerHTML = `
+      <div style="text-align:center;padding:1rem">
+        <p style="font-size:0.78rem;color:var(--text-sub);margin-bottom:1rem">
+          Para completar tu compra, escríbenos por WhatsApp con tu pedido:
+        </p>
+        <a href="https://wa.me/?text=${encodeURIComponent('Hola, quiero pedir: ' + items + ' - Total: $' + finalTotal.toLocaleString('es-MX') + ' MXN')}"
+           target="_blank" class="btn-primary" style="display:inline-flex;gap:0.5rem;padding:12px 24px">
+          <i class="fab fa-whatsapp"></i> Finalizar por WhatsApp
+        </a>
+      </div>`;
   }
-})
+});
 
 }); // end DOMContentLoaded
 </script>
