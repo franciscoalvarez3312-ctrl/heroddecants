@@ -1224,6 +1224,7 @@
   margin-bottom:0.8rem;cursor:pointer;font-family:Inter,sans-serif;
 }
 .btn-checkout:hover{background:#007bb5;transform:translateY(-1px);}
+.btn-checkout:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
 .btn-paypal {
   width:100%;background:#ffc439;color:#003087;border:none;padding:16px;
   border-radius:var(--radius);font-size:0.92rem;font-weight:700;
@@ -1232,6 +1233,8 @@
   margin-bottom:0.8rem;cursor:pointer;font-family:Inter,sans-serif;
 }
 .btn-paypal:hover{background:#f0b429;transform:translateY(-1px);}
+.btn-paypal:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+#buyerForm input:focus{border-color:var(--gold);}
 </style>
 </head>
 <body>
@@ -1519,7 +1522,20 @@
       <div class="cart-row"><span>Envío</span><span id="cartShipping">$99</span></div>
       <div class="cart-row total"><span>Total</span><span id="cartTotal">$0</span></div>
     </div>
-    <button class="btn-paypal" id="paypalBtn">
+    <!-- BUYER FORM -->
+<div id="buyerForm" style="margin-bottom:1rem;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin-bottom:0.6rem;">
+    <input id="buyerName" type="text" placeholder="Nombre *" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:0.82rem;font-family:Inter,sans-serif;outline:none;width:100%;box-sizing:border-box;">
+    <input id="buyerPhone" type="tel" placeholder="Teléfono *" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:0.82rem;font-family:Inter,sans-serif;outline:none;width:100%;box-sizing:border-box;">
+  </div>
+  <input id="buyerEmail" type="email" placeholder="Correo electrónico *" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:0.82rem;font-family:Inter,sans-serif;outline:none;width:100%;box-sizing:border-box;margin-bottom:0.6rem;">
+  <input id="buyerAddress" type="text" placeholder="Dirección completa *" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:0.82rem;font-family:Inter,sans-serif;outline:none;width:100%;box-sizing:border-box;margin-bottom:0.6rem;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;">
+    <input id="buyerCity" type="text" placeholder="Ciudad *" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:0.82rem;font-family:Inter,sans-serif;outline:none;width:100%;box-sizing:border-box;">
+    <input id="buyerZip" type="text" placeholder="Código postal *" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:0.82rem;font-family:Inter,sans-serif;outline:none;width:100%;box-sizing:border-box;">
+  </div>
+</div>
+<button class="btn-paypal" id="paypalBtn">
   <i class="fab fa-paypal" style="font-size:1.3rem"></i>
   <span>Pagar con <strong>PayPal</strong></span>
 </button>
@@ -2986,40 +3002,80 @@ async function initMP() {
   mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "es-MX" });
 }
 
+// Validate buyer form
+function validateBuyerForm() {
+  const name = document.getElementById('buyerName').value.trim();
+  const phone = document.getElementById('buyerPhone').value.trim();
+  const email = document.getElementById('buyerEmail').value.trim();
+  const address = document.getElementById('buyerAddress').value.trim();
+  const city = document.getElementById('buyerCity').value.trim();
+  const zip = document.getElementById('buyerZip').value.trim();
+  if (!name || !phone || !email || !address || !city || !zip) {
+    showToast('Por favor completa todos tus datos de envío');
+    return null;
+  }
+  if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+    showToast('Ingresa un correo válido');
+    return null;
+  }
+  return { name, phone, email, address, city, zip };
+}
+
 document.getElementById('paypalBtn').addEventListener('click', () => {
   if (!cart.length) { showToast('Tu carrito está vacío'); return; }
-  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const discount = couponApplied ? Math.round(total * 0.10) : 0;
-  const finalTotal = total - discount + (total >= FREE_SHIPPING ? 0 : SHIPPING_COST);
+  const buyer = validateBuyerForm();
+  if (!buyer) return;
+  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const discount = couponApplied ? Math.round(subtotal * 0.10) : 0;
+  const shipping = subtotal >= FREE_SHIPPING ? 0 : SHIPPING_COST;
+  const finalTotal = subtotal - discount + shipping;
   window.open('https://www.paypal.com/paypalme/TU_USUARIO_PAYPAL/' + finalTotal, '_blank');
 });
 
 document.getElementById("mpBtn").addEventListener("click", async () => {
   if (!cart.length) { showToast("Tu carrito está vacío"); return; }
-  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const discount = couponApplied ? Math.round(total * 0.10) : 0;
-  const finalTotal = total - discount + (total >= FREE_SHIPPING ? 0 : SHIPPING_COST);
-  const container = document.getElementById("mpContainer");
-  container.style.cssText = "margin-top:1rem;";
-  container.innerHTML = "<p style='font-size:0.75rem;color:var(--text-sub);text-align:center'><i class='fas fa-spinner fa-spin'></i> Redirigiendo...</p>";
+  const buyer = validateBuyerForm();
+  if (!buyer) return;
+
+  const btn = document.getElementById("mpBtn");
+  btn.disabled = true;
+  btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i>&nbsp;Procesando...";
+
+  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const discount = couponApplied ? Math.round(subtotal * 0.10) : 0;
+  const shipping = subtotal >= FREE_SHIPPING ? 0 : SHIPPING_COST;
+  const finalTotal = subtotal - discount + shipping;
+
+  // Build items — include shipping as a separate item if applies
+  const items = cart.map(i => ({
+    title: i.brand + " - " + i.name + " " + i.size + "ml",
+    quantity: i.qty,
+    unit_price: i.price - (couponApplied ? Math.round(i.price * 0.10) : 0),
+    currency_id: "MXN"
+  }));
+
+  if (shipping > 0) {
+    items.push({ title: "Envío estándar", quantity: 1, unit_price: shipping, currency_id: "MXN" });
+  }
+
   try {
-    const items = cart.map(i => ({
-      title: i.brand + " - " + i.name + " " + i.size + "ml",
-      quantity: i.qty,
-      unit_price: i.price,
-      currency_id: "MXN"
-    }));
     const res = await fetch("/.netlify/functions/create-preference", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items })
+      body: JSON.stringify({
+        items,
+        payer: { name: buyer.name, email: buyer.email, phone: buyer.phone },
+        shipments: { receiver_address: { street_name: buyer.address, city_name: buyer.city, zip_code: buyer.zip } }
+      })
     });
     const data = await res.json();
     if (data.init_point) {
       window.location.href = data.init_point;
     } else { throw new Error("No init_point"); }
   } catch(e) {
-    container.innerHTML = "<p style='font-size:0.78rem;color:#e55;text-align:center'>Error. Intenta de nuevo.</p>";
+    document.getElementById("mpContainer").innerHTML = "<p style='font-size:0.78rem;color:#e55;text-align:center;margin-top:0.5rem'>Error al conectar. Intenta de nuevo.</p>";
+    btn.disabled = false;
+    btn.innerHTML = "<i class='fas fa-credit-card'></i>&nbsp;<span>Pagar con <strong>Tarjeta / OXXO</strong></span>";
   }
 })
 
