@@ -3,10 +3,6 @@ const https = require("https");
 const SUPABASE_URL = "https://yxmmnomewbbfajigehgb.supabase.co";
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
-exports.handler = async function(event) {
-  console.log("URL:", SUPABASE_URL);
-  console.log("KEY:", SUPABASE_KEY ? "OK" : "MISSING");
-
 function supabaseRequest(method, path, body = null) {
   return new Promise((resolve, reject) => {
     const url = new URL(SUPABASE_URL + path);
@@ -59,16 +55,13 @@ exports.handler = async function(event) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: "Email y nombre requeridos" }) };
   }
 
-  // Check if email already registered
   const existing = await supabaseRequest("GET", `/rest/v1/cupones?email=eq.${encodeURIComponent(email)}&select=email`);
   if (existing.body && existing.body.length > 0) {
     return { statusCode: 200, headers, body: JSON.stringify({ error: "Este correo ya tiene un cupón registrado" }) };
   }
 
-  // Generate unique code
   const codigo = generateCode();
 
-  // Save to Supabase
   await supabaseRequest("POST", "/rest/v1/cupones", { email, codigo, usado: false });
 
   return {
