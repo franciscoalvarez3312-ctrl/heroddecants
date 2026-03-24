@@ -1215,7 +1215,55 @@
     .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
     .page-info { font-size: 0.75rem; color: var(--text-muted); padding: 0 0.5rem; }
 
-  </style>
+  
+/* PAYMENT BUTTONS */
+.btn-checkout {
+  width: 100%;
+  background: #009ee3;
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: var(--radius);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  transition: background var(--transition), transform var(--transition);
+  margin-bottom: 0.8rem;
+  cursor: pointer;
+  font-family: Inter, sans-serif;
+}
+.btn-checkout:hover {
+  background: #007bb5;
+  transform: translateY(-1px);
+}
+.btn-paypal {
+  width: 100%;
+  background: #ffc439;
+  color: #003087;
+  border: none;
+  padding: 16px;
+  border-radius: var(--radius);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  transition: background var(--transition), transform var(--transition);
+  margin-bottom: 0.8rem;
+  cursor: pointer;
+  font-family: Inter, sans-serif;
+}
+.btn-paypal:hover {
+  background: #f0b429;
+  transform: translateY(-1px);
+}
+</style>
 </head>
 <body>
 
@@ -1502,11 +1550,16 @@
       <div class="cart-row"><span>Envío</span><span id="cartShipping">$99</span></div>
       <div class="cart-row total"><span>Total</span><span id="cartTotal">$0</span></div>
     </div>
-    <button class="btn-checkout" id="mpBtn">
-          <i class="fas fa-credit-card"></i> Pagar con tarjeta / OXXO
-        </button>
-        <div id="mpContainer"></div>
-    <p class="secure-note"><i class="fas fa-lock"></i>&nbsp;Pago 100% seguro · Protegido por PayPal</p>
+    <button class="btn-paypal" id="paypalBtn">
+  <i class="fab fa-paypal" style="font-size:1.3rem"></i>
+  <span>Pagar con <strong>PayPal</strong></span>
+</button>
+<button class="btn-checkout" id="mpBtn">
+  <i class="fas fa-credit-card" style="font-size:1.1rem"></i>
+  <span>Pagar con <strong>Tarjeta / OXXO</strong></span>
+</button>
+<div id="mpContainer"></div>
+<p class="secure-note"><i class="fas fa-lock"></i>&nbsp;Pago 100% seguro · SSL encriptado</p>
   </div>
 </div>
 
@@ -2963,6 +3016,16 @@ async function initMP() {
   if (mp) return;
   mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "es-MX" });
 }
+
+// PayPal button
+document.getElementById('paypalBtn').addEventListener('click', () => {
+  if (!cart.length) { showToast('Tu carrito está vacío'); return; }
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const discount = couponApplied ? Math.round(total * 0.10) : 0;
+  const finalTotal = total - discount + (total >= FREE_SHIPPING ? 0 : SHIPPING_COST);
+  const url = `https://www.paypal.com/paypalme/TU_USUARIO_PAYPAL/${finalTotal}`;
+  window.open(url, '_blank');
+});
 
 document.getElementById("mpBtn").addEventListener("click", async () => {
   if (!cart.length) { showToast("Tu carrito está vacío"); return; }
