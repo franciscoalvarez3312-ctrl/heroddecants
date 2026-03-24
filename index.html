@@ -3002,21 +3002,18 @@ async function initMP() {
   mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "es-MX" });
 }
 
-// Validate buyer form
 function validateBuyerForm() {
-  const name = document.getElementById('buyerName').value.trim();
-  const phone = document.getElementById('buyerPhone').value.trim();
-  const email = document.getElementById('buyerEmail').value.trim();
+  const name    = document.getElementById('buyerName').value.trim();
+  const phone   = document.getElementById('buyerPhone').value.trim();
+  const email   = document.getElementById('buyerEmail').value.trim();
   const address = document.getElementById('buyerAddress').value.trim();
-  const city = document.getElementById('buyerCity').value.trim();
-  const zip = document.getElementById('buyerZip').value.trim();
-  if (!name || !phone || !email || !address || !city || !zip) {
-    showToast('Por favor completa todos tus datos de envío');
-    return null;
+  const city    = document.getElementById('buyerCity').value.trim();
+  const zip     = document.getElementById('buyerZip').value.trim();
+  if (!name||!phone||!email||!address||!city||!zip) {
+    showToast('Por favor completa todos tus datos de envío'); return null;
   }
   if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
-    showToast('Ingresa un correo válido');
-    return null;
+    showToast('Ingresa un correo válido'); return null;
   }
   return { name, phone, email, address, city, zip };
 }
@@ -3026,9 +3023,8 @@ document.getElementById('paypalBtn').addEventListener('click', () => {
   const buyer = validateBuyerForm();
   if (!buyer) return;
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const discount = couponApplied ? Math.round(subtotal * 0.10) : 0;
   const shipping = subtotal >= FREE_SHIPPING ? 0 : SHIPPING_COST;
-  const finalTotal = subtotal - discount + shipping;
+  const finalTotal = subtotal + shipping;
   window.open('https://www.paypal.com/paypalme/TU_USUARIO_PAYPAL/' + finalTotal, '_blank');
 });
 
@@ -3042,15 +3038,12 @@ document.getElementById("mpBtn").addEventListener("click", async () => {
   btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i>&nbsp;Procesando...";
 
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const discount = couponApplied ? Math.round(subtotal * 0.10) : 0;
   const shipping = subtotal >= FREE_SHIPPING ? 0 : SHIPPING_COST;
-  const finalTotal = subtotal - discount + shipping;
 
-  // Build items — include shipping as a separate item if applies
   const items = cart.map(i => ({
     title: i.brand + " - " + i.name + " " + i.size + "ml",
     quantity: i.qty,
-    unit_price: i.price - (couponApplied ? Math.round(i.price * 0.10) : 0),
+    unit_price: i.price,
     currency_id: "MXN"
   }));
 
