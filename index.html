@@ -1502,9 +1502,9 @@
       <div class="cart-row"><span>Envío</span><span id="cartShipping">$99</span></div>
       <div class="cart-row total"><span>Total</span><span id="cartTotal">$0</span></div>
     </div>
-    <button class="btn-checkout" id="mpBtn">
-          <i class="fas fa-credit-card"></i> Pagar con tarjeta / OXXO
-        </button>
+    <button class="btn-checkout" id="btnProceder" onclick="procederCheckout()">
+  <i class="fas fa-arrow-right"></i> Proceder a la compra
+</button>
         <div id="mpContainer"></div>
     <p class="secure-note"><i class="fas fa-lock"></i>&nbsp;Pago 100% seguro · Protegido por PayPal</p>
   </div>
@@ -3045,7 +3045,12 @@ document.getElementById("mpBtn").addEventListener("click", async () => {
         </a>
       </div>`;
   }
-});
+
+function procederCheckout() {
+  if (!cart.length) return;
+  localStorage.setItem("herod_cart", JSON.stringify(cart));
+  window.location.href = "checkout.html";
+}
 
 }); // end DOMContentLoaded
 </script>
