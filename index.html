@@ -1595,6 +1595,15 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+  // Clear cart if payment was successful
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('pago') === 'exitoso') {
+    cart = [];
+    localStorage.removeItem('herod_cart');
+    renderCart();
+    showToast('¡Pago exitoso! Gracias por tu compra 🎉');
+  }
+
 // ── DATA ─────────────────────────────────────────────────────────
 const FREE_SHIPPING = 1499;
 const SHIPPING_COST = 99;
@@ -2155,7 +2164,7 @@ const perfumes = [
 ];
 
 // ── STATE ────────────────────────────────────────────────────────
-let cart = [];
+let cart = JSON.parse(localStorage.getItem("herod_cart") || "[]");
 let activeFilter = "Todos";
 let currentProduct = null;
 let selectedSize = null;
@@ -2275,6 +2284,7 @@ function updateCartCount() {
 }
 
 function renderCart() {
+    localStorage.setItem("herod_cart", JSON.stringify(cart));
   const body = document.getElementById("cartBody");
   const footer = document.getElementById("cartFooter");
   if (!cart.length) {
@@ -2815,39 +2825,40 @@ document.getElementById("regSubmit").addEventListener("click", async () => {
   const email = document.getElementById("regEmail").value.trim();
   const errEl = document.getElementById("regError");
   errEl.style.display = "none";
-
-  if (!name) { errEl.textContent = "Por favor escribe tu nombre."; errEl.style.display = "block"; return; }
+  if (!name)  { errEl.textContent = "Por favor escribe tu nombre."; errEl.style.display = "block"; return; }
   if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) { errEl.textContent = "Por favor escribe un correo válido."; errEl.style.display = "block"; return; }
-
   const btn = document.getElementById("regSubmit");
-  btn.disabled = true;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:6px"></i>Enviando...';
-
+  btn.disabled = true; btn.textContent = "Generando cupón...";
   try {
-    if (EJS_PUBLIC_KEY !== "TU_PUBLIC_KEY") {
-      // Real EmailJS send
-      emailjs.init(EJS_PUBLIC_KEY);
-      await emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
-        to_name: name,
-        to_email: email,
-        discount_code: DISCOUNT_CODE,
-        store_name: "Herod Decants"
-      });
+    const res = await fetch("/.netlify/functions/generate-coupon", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, name })
+    });
+    const data = await res.json();
+    if (data.error) {
+      errEl.textContent = data.error; errEl.style.display = "block";
+      btn.disabled = false; btn.textContent = "Obtener mi cupón"; return;
     }
-    // Mark as registered
-    localStorage.setItem("herod_registered", email);
-    // Show success
-    document.getElementById("regFormView").style.display = "none";
-    document.getElementById("regEmailConfirm").textContent = email;
-    document.getElementById("regSuccessView").style.display = "block";
-    showToast("¡Código enviado a tu correo!");
-  } catch(err) {
-    errEl.textContent = "Hubo un error al enviar. Intenta de nuevo.";
-    errEl.style.display = "block";
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-envelope" style="margin-right:6px"></i>Recibir mi código';
+    emailjs.send("service_f11f6dc", "template_bn9a0ps", {
+      to_email: email, buyer_name: name, buyer_email: email,
+      email_subject: "🎉 Tu cupón de bienvenida - Herod Decants",
+      email_intro: "Gracias por registrarte. Aquí está tu cupón exclusivo:",
+      coupon_code: data.codigo, order_items: "", subtotal: "", shipping: "",
+      total: "", buyer_address: "", buyer_city: "", buyer_zip: "", payment_method: ""
+    }).catch(e => console.error("EmailJS:", e));
+    const codeDisplay = document.getElementById("regCodeDisplay");
+    const emailConfirm = document.getElementById("regEmailConfirm");
+    if (codeDisplay) codeDisplay.textContent = data.codigo;
+    if (emailConfirm) emailConfirm.textContent = email;
+    const regForm = document.querySelector(".reg-form");
+    const regSuccess = document.querySelector(".reg-success");
+    if (regForm) regForm.style.display = "none";
+    if (regSuccess) regSuccess.style.display = "block";
+  } catch(e) {
+    errEl.textContent = "Error al generar el cupón. Intenta de nuevo.";
+    errEl.style.display = "block"; btn.disabled = false; btn.textContent = "Obtener mi cupón";
   }
-});
+})
 
 // Code display removed - code sent via email only
 
@@ -3004,38 +3015,27 @@ async function initMP() {
   mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "es-MX" });
 }
 
-// ── EmailJS helpers ──────────────────────────────────────────────────────────
-const EMAILJS_SERVICE   = "service_f11f6dc";
+
+const EMAILJS_SERVICE         = "service_f11f6dc";
 const EMAILJS_TEMPLATE_ADMIN  = "template_8wi4izg";
 const EMAILJS_TEMPLATE_CLIENT = "template_bn9a0ps";
 
 function sendOrderEmails(buyer, orderItems, subtotal, shipping, total, paymentMethod) {
   const params = {
-    buyer_name:     buyer.name,
-    buyer_email:    buyer.email,
-    buyer_phone:    buyer.phone,
-    buyer_address:  buyer.address,
-    buyer_city:     buyer.city,
-    buyer_zip:      buyer.zip,
-    order_items:    orderItems,
-    subtotal:       subtotal.toLocaleString("es-MX"),
-    shipping:       shipping.toLocaleString("es-MX"),
-    total:          total.toLocaleString("es-MX"),
+    buyer_name: buyer.name, buyer_email: buyer.email, buyer_phone: buyer.phone,
+    buyer_address: buyer.address, buyer_city: buyer.city, buyer_zip: buyer.zip,
+    order_items: orderItems, subtotal: subtotal.toLocaleString("es-MX"),
+    shipping: shipping.toLocaleString("es-MX"), total: total.toLocaleString("es-MX"),
     payment_method: paymentMethod
   };
-  // Email to admin
-  emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE_ADMIN, {
-    ...params,
-    to_email: "heroddecants@gmail.com"
-  }).catch(e => console.error("Admin email error:", e));
-  // Email to client
+  emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE_ADMIN, { ...params, to_email: "heroddecants@gmail.com" }).catch(e => console.error(e));
   emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE_CLIENT, {
-    ...params,
-    to_email: buyer.email
-  }).catch(e => console.error("Client email error:", e));
+    ...params, to_email: buyer.email,
+    email_subject: "✅ Tu pedido está confirmado - Herod Decants",
+    email_intro: "Hemos recibido tu pedido. En breve coordinamos tu envío.", coupon_code: ""
+  }).catch(e => console.error(e));
 }
 
-// ── Validate buyer form ───────────────────────────────────────────────────────
 function validateBuyerForm() {
   const name    = document.getElementById('buyerName').value.trim();
   const phone   = document.getElementById('buyerPhone').value.trim();
@@ -3043,66 +3043,42 @@ function validateBuyerForm() {
   const address = document.getElementById('buyerAddress').value.trim();
   const city    = document.getElementById('buyerCity').value.trim();
   const zip     = document.getElementById('buyerZip').value.trim();
-  if (!name||!phone||!email||!address||!city||!zip) {
-    showToast('Por favor completa todos tus datos de envío'); return null;
-  }
-  if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
-    showToast('Ingresa un correo válido'); return null;
-  }
+  if (!name||!phone||!email||!address||!city||!zip) { showToast('Por favor completa todos tus datos de envío'); return null; }
+  if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) { showToast('Ingresa un correo válido'); return null; }
   return { name, phone, email, address, city, zip };
 }
 
-// ── PayPal ────────────────────────────────────────────────────────────────────
 document.getElementById('paypalBtn').addEventListener('click', () => {
   if (!cart.length) { showToast('Tu carrito está vacío'); return; }
-  const buyer = validateBuyerForm();
-  if (!buyer) return;
+  const buyer = validateBuyerForm(); if (!buyer) return;
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const shipping = subtotal >= FREE_SHIPPING ? 0 : SHIPPING_COST;
   const total = subtotal + shipping;
   const orderItems = cart.map(i => i.brand + " - " + i.name + " " + i.size + "ml x" + i.qty + " = $" + (i.price * i.qty).toLocaleString("es-MX") + " MXN").join("\n");
   sendOrderEmails(buyer, orderItems, subtotal, shipping, total, "PayPal");
+  cart = []; localStorage.removeItem('herod_cart'); renderCart();
   window.open('https://www.paypal.com/paypalme/TU_USUARIO_PAYPAL/' + total, '_blank');
 });
 
-// ── MercadoPago ───────────────────────────────────────────────────────────────
 document.getElementById("mpBtn").addEventListener("click", async () => {
   if (!cart.length) { showToast("Tu carrito está vacío"); return; }
-  const buyer = validateBuyerForm();
-  if (!buyer) return;
-
+  const buyer = validateBuyerForm(); if (!buyer) return;
   const btn = document.getElementById("mpBtn");
   btn.disabled = true;
   btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i>&nbsp;Procesando...";
-
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const shipping = subtotal >= FREE_SHIPPING ? 0 : SHIPPING_COST;
   const total = subtotal + shipping;
   const orderItems = cart.map(i => i.brand + " - " + i.name + " " + i.size + "ml x" + i.qty + " = $" + (i.price * i.qty).toLocaleString("es-MX") + " MXN").join("\n");
-
-  const items = cart.map(i => ({
-    title: i.brand + " - " + i.name + " " + i.size + "ml",
-    quantity: i.qty,
-    unit_price: i.price,
-    currency_id: "MXN"
-  }));
-  if (shipping > 0) {
-    items.push({ title: "Envío estándar", quantity: 1, unit_price: shipping, currency_id: "MXN" });
-  }
-
+  const items = cart.map(i => ({ title: i.brand + " - " + i.name + " " + i.size + "ml", quantity: i.qty, unit_price: i.price, currency_id: "MXN" }));
+  if (shipping > 0) items.push({ title: "Envío estándar", quantity: 1, unit_price: shipping, currency_id: "MXN" });
   try {
     const res = await fetch("/.netlify/functions/create-preference", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        items,
-        payer: { name: buyer.name, email: buyer.email, phone: buyer.phone },
-        shipments: { receiver_address: { street_name: buyer.address, city_name: buyer.city, zip_code: buyer.zip } }
-      })
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items, payer: { name: buyer.name, email: buyer.email, phone: buyer.phone }, shipments: { receiver_address: { street_name: buyer.address, city_name: buyer.city, zip_code: buyer.zip } } })
     });
     const data = await res.json();
     if (data.init_point) {
-      // Send emails before redirecting
       sendOrderEmails(buyer, orderItems, subtotal, shipping, total, "Tarjeta / OXXO (MercadoPago)");
       window.location.href = data.init_point;
     } else { throw new Error("No init_point"); }
