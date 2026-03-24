@@ -1236,6 +1236,8 @@
 .btn-paypal:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
 #buyerForm input:focus{border-color:var(--gold);}
 </style>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init("HUJtY9ND4ZeSJB1UR");</script>
 </head>
 <body>
 
@@ -3002,6 +3004,38 @@ async function initMP() {
   mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "es-MX" });
 }
 
+// ── EmailJS helpers ──────────────────────────────────────────────────────────
+const EMAILJS_SERVICE   = "service_f11f6dc";
+const EMAILJS_TEMPLATE_ADMIN  = "template_8wi4izg";
+const EMAILJS_TEMPLATE_CLIENT = "template_bn9a0ps";
+
+function sendOrderEmails(buyer, orderItems, subtotal, shipping, total, paymentMethod) {
+  const params = {
+    buyer_name:     buyer.name,
+    buyer_email:    buyer.email,
+    buyer_phone:    buyer.phone,
+    buyer_address:  buyer.address,
+    buyer_city:     buyer.city,
+    buyer_zip:      buyer.zip,
+    order_items:    orderItems,
+    subtotal:       subtotal.toLocaleString("es-MX"),
+    shipping:       shipping.toLocaleString("es-MX"),
+    total:          total.toLocaleString("es-MX"),
+    payment_method: paymentMethod
+  };
+  // Email to admin
+  emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE_ADMIN, {
+    ...params,
+    to_email: "heroddecants@gmail.com"
+  }).catch(e => console.error("Admin email error:", e));
+  // Email to client
+  emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE_CLIENT, {
+    ...params,
+    to_email: buyer.email
+  }).catch(e => console.error("Client email error:", e));
+}
+
+// ── Validate buyer form ───────────────────────────────────────────────────────
 function validateBuyerForm() {
   const name    = document.getElementById('buyerName').value.trim();
   const phone   = document.getElementById('buyerPhone').value.trim();
@@ -3018,16 +3052,20 @@ function validateBuyerForm() {
   return { name, phone, email, address, city, zip };
 }
 
+// ── PayPal ────────────────────────────────────────────────────────────────────
 document.getElementById('paypalBtn').addEventListener('click', () => {
   if (!cart.length) { showToast('Tu carrito está vacío'); return; }
   const buyer = validateBuyerForm();
   if (!buyer) return;
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const shipping = subtotal >= FREE_SHIPPING ? 0 : SHIPPING_COST;
-  const finalTotal = subtotal + shipping;
-  window.open('https://www.paypal.com/paypalme/TU_USUARIO_PAYPAL/' + finalTotal, '_blank');
+  const total = subtotal + shipping;
+  const orderItems = cart.map(i => i.brand + " - " + i.name + " " + i.size + "ml x" + i.qty + " = $" + (i.price * i.qty).toLocaleString("es-MX") + " MXN").join("\n");
+  sendOrderEmails(buyer, orderItems, subtotal, shipping, total, "PayPal");
+  window.open('https://www.paypal.com/paypalme/TU_USUARIO_PAYPAL/' + total, '_blank');
 });
 
+// ── MercadoPago ───────────────────────────────────────────────────────────────
 document.getElementById("mpBtn").addEventListener("click", async () => {
   if (!cart.length) { showToast("Tu carrito está vacío"); return; }
   const buyer = validateBuyerForm();
@@ -3039,6 +3077,8 @@ document.getElementById("mpBtn").addEventListener("click", async () => {
 
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const shipping = subtotal >= FREE_SHIPPING ? 0 : SHIPPING_COST;
+  const total = subtotal + shipping;
+  const orderItems = cart.map(i => i.brand + " - " + i.name + " " + i.size + "ml x" + i.qty + " = $" + (i.price * i.qty).toLocaleString("es-MX") + " MXN").join("\n");
 
   const items = cart.map(i => ({
     title: i.brand + " - " + i.name + " " + i.size + "ml",
@@ -3046,7 +3086,6 @@ document.getElementById("mpBtn").addEventListener("click", async () => {
     unit_price: i.price,
     currency_id: "MXN"
   }));
-
   if (shipping > 0) {
     items.push({ title: "Envío estándar", quantity: 1, unit_price: shipping, currency_id: "MXN" });
   }
@@ -3063,6 +3102,8 @@ document.getElementById("mpBtn").addEventListener("click", async () => {
     });
     const data = await res.json();
     if (data.init_point) {
+      // Send emails before redirecting
+      sendOrderEmails(buyer, orderItems, subtotal, shipping, total, "Tarjeta / OXXO (MercadoPago)");
       window.location.href = data.init_point;
     } else { throw new Error("No init_point"); }
   } catch(e) {
