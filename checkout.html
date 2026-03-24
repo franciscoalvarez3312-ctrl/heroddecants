@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout · Herod Decants</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=TU_PAYPAL_CLIENT_ID&currency=MXN"></script>
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #e0c068;
+      --bg: #161616;
+      --surface: #1f1f1f;
+      --surface2: #2a2a2a;
+      --border: #333;
+      --text: #f0f0f0;
+      --text-sub: #999;
+      --radius: 12px;
+      --danger: #e05555;
+      --success: #4caf7d;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: Inter, sans-serif; min-height: 100vh; }
+
+    /* NAV */
+    nav { background: #111; border-bottom: 1px solid var(--border); padding: 0 1.5rem; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .nav-logo { font-family: "Playfair Display", serif; font-size: 1.2rem; color: var(--text); text-decoration: none; }
+    .nav-logo span { color: var(--gold); font-style: normal; }
+    .nav-back { color: var(--text-sub); text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; transition: color .2s; }
+    .nav-back:hover { color: var(--gold); }
+
+    /* LAYOUT */
+    .checkout-wrap { max-width: 1000px; margin: 0 auto; padding: 2rem 1rem 4rem; display: grid; grid-template-columns: 1fr 380px; gap: 2rem; }
+    @media(max-width:768px){ .checkout-wrap { grid-template-columns: 1fr; } }
+
+    /* CARDS */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.2rem; }
+    .card-title { font-size: 0.72rem; letter-spacing: 2px; color: var(--gold); text-transform: uppercase; margin-bottom: 1.2rem; font-weight: 600; }
+
+    /* FORM */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media(max-width:480px){ .form-row { grid-template-columns: 1fr; } }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
+    .form-group label { font-size: 0.78rem; color: var(--text-sub); }
+    .form-group input, .form-group select, .form-group textarea {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text); padding: 0.7rem 1rem; font-size: 0.9rem; font-family: Inter, sans-serif;
+      outline: none; transition: border .2s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold); }
+    .form-group select { cursor: pointer; }
+    .form-group textarea { resize: none; height: 70px; }
+
+    /* SHIPPING OPTIONS */
+    .shipping-options { display: flex; flex-direction: column; gap: 0.8rem; }
+    .shipping-opt { display: flex; align-items: center; gap: 1rem; background: var(--surface2); border: 2px solid var(--border); border-radius: 10px; padding: 1rem; cursor: pointer; transition: border .2s; }
+    .shipping-opt.selected { border-color: var(--gold); }
+    .shipping-opt input[type=radio] { accent-color: var(--gold); width: 16px; height: 16px; flex-shrink: 0; }
+    .ship-info { flex: 1; }
+    .ship-name { font-size: 0.9rem; font-weight: 500; }
+    .ship-desc { font-size: 0.76rem; color: var(--text-sub); margin-top: 2px; }
+    .ship-price { font-size: 0.95rem; font-weight: 600; color: var(--gold); }
+
+    /* COUPON */
+    .coupon-row { display: flex; gap: 0.7rem; }
+    .coupon-row input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 0.7rem 1rem; font-size: 0.9rem; outline: none; transition: border .2s; text-transform: uppercase; }
+    .coupon-row input:focus { border-color: var(--gold); }
+    .btn-apply { background: var(--surface2); border: 1px solid var(--gold); color: var(--gold); border-radius: 8px; padding: 0.7rem 1.2rem; font-size: 0.85rem; cursor: pointer; white-space: nowrap; transition: background .2s; }
+    .btn-apply:hover { background: var(--gold); color: #111; }
+    .coupon-msg { font-size: 0.8rem; margin-top: 0.5rem; min-height: 18px; }
+    .coupon-msg.ok { color: var(--success); }
+    .coupon-msg.err { color: var(--danger); }
+
+    /* ORDER SUMMARY */
+    .summary-item { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem; }
+    .summary-img { width: 48px; height: 48px; border-radius: 6px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; overflow: hidden; flex-shrink: 0; }
+    .summary-img img { width: 100%; height: 100%; object-fit: cover; }
+    .summary-item-info { flex: 1; }
+    .summary-item-name { font-size: 0.82rem; font-weight: 500; line-height: 1.3; }
+    .summary-item-sub { font-size: 0.74rem; color: var(--text-sub); }
+    .summary-item-price { font-size: 0.88rem; font-weight: 600; color: var(--gold); white-space: nowrap; }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 1rem 0; }
+    .totals-row { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-sub); margin-bottom: 0.5rem; }
+    .totals-row.total { font-size: 1rem; font-weight: 700; color: var(--text); margin-top: 0.5rem; }
+    .totals-row.discount { color: var(--success); }
+
+    /* PAYMENT BUTTONS */
+    .pay-section { margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.8rem; }
+    .btn-pay { width: 100%; padding: 0.9rem; border-radius: 10px; font-size: 0.95rem; font-weight: 600; cursor: pointer; border: none; display: flex; align-items: center; justify-content: center; gap: 0.6rem; transition: opacity .2s, transform .1s; }
+    .btn-pay:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-pay:active { transform: translateY(0); }
+    .btn-card { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: #111; }
+    .btn-oxxo { background: #e8121c; color: #fff; }
+    .btn-oxxo img { height: 20px; filter: brightness(10); }
+    #paypalContainer .paypal-buttons { border-radius: 10px !important; overflow: hidden; }
+    .secure-note { text-align: center; font-size: 0.74rem; color: var(--text-sub); margin-top: 0.5rem; }
+    #mpBrickContainer { margin-top: 0.5rem; }
+
+    /* SPINNER */
+    .spinner { display: none; width: 18px; height: 18px; border: 2px solid rgba(0,0,0,.3); border-top-color: #111; border-radius: 50%; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* FREE SHIP BADGE */
+    .free-ship-badge { background: rgba(76,175,125,.15); border: 1px solid var(--success); color: var(--success); border-radius: 8px; padding: 0.6rem 1rem; font-size: 0.8rem; text-align: center; margin-bottom: 1rem; display: none; }
+    .free-ship-badge.show { display: block; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-back"><i class="fas fa-arrow-left"></i> Seguir comprando</a>
+  <a href="index.html" class="nav-logo"><span>HEROD</span> <em>Decants</em></a>
+  <div style="width:120px"></div>
+</nav>
+
+<div class="checkout-wrap">
+
+  <!-- LEFT COLUMN -->
+  <div class="left-col">
+
+    <!-- CONTACT -->
+    <div class="card">
+      <div class="card-title"><i class="fas fa-user"></i> &nbsp;Datos de contacto</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nombre *</label>
+          <input type="text" id="chkName" placeholder="Tu nombre" autocomplete="given-name"/>
+        </div>
+        <div class="form-group">
+          <label>Apellido *</label>
+          <input type="text" id="chkLastname" placeholder="Tu apellido" autocomplete="family-name"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Correo electrónico *</label>
+        <input type="email" id="chkEmail" placeholder="correo@ejemplo.com" autocomplete="email"/>
+      </div>
+      <div class="form-group">
+        <label>Teléfono *</label>
+        <input type="tel" id="chkPhone" placeholder="10 dígitos" autocomplete="tel"/>
+      </div>
+    </div>
+
+    <!-- SHIPPING ADDRESS -->
+    <div class="card">
+      <div class="card-title"><i class="fas fa-map-marker-alt"></i> &nbsp;Dirección de envío</div>
+      <div class="form-group">
+        <label>Calle y número *</label>
+        <input type="text" id="chkStreet" placeholder="Ej. Av. Principal 123" autocomplete="street-address"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Colonia *</label>
+          <input type="text" id="chkColonia" placeholder="Colonia"/>
+        </div>
+        <div class="form-group">
+          <label>Ciudad *</label>
+          <input type="text" id="chkCity" placeholder="Ciudad" autocomplete="address-level2"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Estado *</label>
+          <input type="text" id="chkState" placeholder="Estado" autocomplete="address-level1"/>
+        </div>
+        <div class="form-group">
+          <label>Código postal *</label>
+          <input type="text" id="chkZip" placeholder="00000" maxlength="5" autocomplete="postal-code"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Referencias (opcional)</label>
+        <textarea id="chkRef" placeholder="Ej. Entre calles, color de la fachada..."></textarea>
+      </div>
+    </div>
+
+    <!-- SHIPPING TYPE -->
+    <div class="card">
+      <div class="card-title"><i class="fas fa-truck"></i> &nbsp;Tipo de envío</div>
+      <div id="freeShipBadge" class="free-ship-badge">🎉 ¡Tu pedido tiene envío gratis!</div>
+      <div class="shipping-options">
+        <label class="shipping-opt selected" id="optStd">
+          <input type="radio" name="shipping" value="99" checked onchange="updateShipping(99, this)"/>
+          <div class="ship-info">
+            <div class="ship-name">Envío Estándar</div>
+            <div class="ship-desc">5–7 días hábiles · Paquetería nacional</div>
+          </div>
+          <span class="ship-price" id="priceStd">$99</span>
+        </label>
+        <label class="shipping-opt" id="optExp">
+          <input type="radio" name="shipping" value="179" onchange="updateShipping(179, this)"/>
+          <div class="ship-info">
+            <div class="ship-name">Envío Express</div>
+            <div class="ship-desc">2–3 días hábiles · Entrega prioritaria</div>
+          </div>
+          <span class="ship-price">$179</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- COUPON -->
+    <div class="card">
+      <div class="card-title"><i class="fas fa-tag"></i> &nbsp;Cupón de descuento</div>
+      <div class="coupon-row">
+        <input type="text" id="couponInput" placeholder="Código de descuento" maxlength="20"/>
+        <button class="btn-apply" onclick="applyCoupon()">Aplicar</button>
+      </div>
+      <div class="coupon-msg" id="couponMsg"></div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="right-col">
+
+    <!-- ORDER SUMMARY -->
+    <div class="card">
+      <div class="card-title"><i class="fas fa-shopping-bag"></i> &nbsp;Tu pedido</div>
+      <div id="summaryItems"></div>
+      <hr class="divider"/>
+      <div class="totals-row"><span>Subtotal</span><span id="sumSubtotal">$0</span></div>
+      <div class="totals-row" id="rowShipping"><span>Envío</span><span id="sumShipping">$99</span></div>
+      <div class="totals-row discount" id="rowDiscount" style="display:none"><span id="discountLabel">Descuento</span><span id="sumDiscount"></span></div>
+      <div class="totals-row total"><span>Total</span><span id="sumTotal">$0</span></div>
+    </div>
+
+    <!-- PAYMENT -->
+    <div class="card">
+      <div class="card-title"><i class="fas fa-credit-card"></i> &nbsp;Forma de pago</div>
+      <div class="pay-section">
+        <button class="btn-pay btn-card" id="btnCard" onclick="pagarTarjeta()">
+          <i class="fas fa-credit-card"></i> Tarjeta de crédito / débito
+          <div class="spinner" id="spinCard"></div>
+        </button>
+        <button class="btn-pay btn-oxxo" id="btnOxxo" onclick="pagarOxxo()">
+          <i class="fas fa-store"></i> Pagar en OXXO
+          <div class="spinner" id="spinOxxo"></div>
+        </button>
+        <div id="mpBrickContainer"></div>
+        <div id="paypalContainer"></div>
+      </div>
+      <p class="secure-note"><i class="fas fa-lock"></i> Pago 100% seguro</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const FREE_SHIPPING = 1499;
+  const SUPABASE_URL = "TU_SUPABASE_URL";
+  const SUPABASE_KEY = "TU_SUPABASE_ANON_KEY";
+  const MP_PUBLIC_KEY = "TU_MP_PUBLIC_KEY";
+  const PAYPAL_CLIENT_ID = "TU_PAYPAL_CLIENT_ID";
+
+  let cart = JSON.parse(localStorage.getItem("herod_cart") || "[]");
+  let shippingCost = 99;
+  let discountPct = 0;
+  let couponCode = "";
+  let couponEmail = "";
+
+  const fmt = n => "$" + Number(n).toLocaleString("es-MX", {minimumFractionDigits:0, maximumFractionDigits:0});
+
+  // ── INIT ────────────────────────────────────────────
+  function init() {
+    if (!cart.length) { window.location.href = "index.html"; return; }
+    renderSummary();
+    initPayPal();
+  }
+
+  // ── RENDER SUMMARY ───────────────────────────────────
+  function renderSummary() {
+    const container = document.getElementById("summaryItems");
+    container.innerHTML = cart.map(item => `
+      <div class="summary-item">
+        <div class="summary-img">
+          ${item.imgUrl ? `<img src="${item.imgUrl}" alt="${item.name}"/>` : item.emoji || "🧴"}
+        </div>
+        <div class="summary-item-info">
+          <div class="summary-item-name">${item.brand} · ${item.name}</div>
+          <div class="summary-item-sub">${item.size}ml × ${item.qty}</div>
+        </div>
+        <div class="summary-item-price">${fmt(item.price * item.qty)}</div>
+      </div>
+    `).join("");
+    updateTotals();
+  }
+
+  // ── UPDATE TOTALS ────────────────────────────────────
+  function updateTotals() {
+    const subtotal = cart.reduce((a,i) => a + i.price*i.qty, 0);
+    const freeShip = subtotal >= FREE_SHIPPING;
+
+    // Free shipping override
+    const effectiveShipping = freeShip ? 0 : shippingCost;
+    document.getElementById("freeShipBadge").classList.toggle("show", freeShip);
+    document.getElementById("rowShipping").querySelector("span:last-child").textContent = freeShip ? "GRATIS 🎉" : fmt(effectiveShipping);
+    document.querySelectorAll(".ship-price")[0].textContent = freeShip ? "GRATIS" : "$99";
+
+    const discountAmt = discountPct > 0 ? Math.round(subtotal * discountPct / 100) : 0;
+    const total = subtotal + effectiveShipping - discountAmt;
+
+    document.getElementById("sumSubtotal").textContent = fmt(subtotal);
+    document.getElementById("sumShipping").textContent = freeShip ? "GRATIS 🎉" : fmt(effectiveShipping);
+
+    if (discountAmt > 0) {
+      document.getElementById("rowDiscount").style.display = "flex";
+      document.getElementById("discountLabel").textContent = `Cupón ${couponCode} (${discountPct}%)`;
+      document.getElementById("sumDiscount").textContent = `−${fmt(discountAmt)}`;
+    } else {
+      document.getElementById("rowDiscount").style.display = "none";
+    }
+    document.getElementById("sumTotal").textContent = fmt(total);
+  }
+
+  // ── SHIPPING CHANGE ──────────────────────────────────
+  function updateShipping(cost, radio) {
+    shippingCost = cost;
+    document.querySelectorAll(".shipping-opt").forEach(el => el.classList.remove("selected"));
+    radio.closest(".shipping-opt").classList.add("selected");
+    updateTotals();
+  }
+
+  // ── COUPON ───────────────────────────────────────────
+  async function applyCoupon() {
+    const code = document.getElementById("couponInput").value.trim().toUpperCase();
+    const email = document.getElementById("chkEmail").value.trim().toLowerCase();
+    const msg = document.getElementById("couponMsg");
+
+    if (!code) { msg.textContent = "Escribe un código."; msg.className = "coupon-msg err"; return; }
+    if (!email) { msg.textContent = "Ingresa tu correo primero."; msg.className = "coupon-msg err"; return; }
+
+    msg.textContent = "Validando..."; msg.className = "coupon-msg";
+
+    try {
+      const res = await fetch(`/.netlify/functions/validate-coupon?code=${encodeURIComponent(code)}&email=${encodeURIComponent(email)}`);
+      const data = await res.json();
+      if (data.valid) {
+        discountPct = data.discount || 10;
+        couponCode = code;
+        couponEmail = email;
+        msg.textContent = `✅ Cupón aplicado: ${discountPct}% de descuento`;
+        msg.className = "coupon-msg ok";
+        updateTotals();
+      } else {
+        discountPct = 0; couponCode = "";
+        msg.textContent = data.message || "Cupón no válido o ya utilizado.";
+        msg.className = "coupon-msg err";
+        updateTotals();
+      }
+    } catch(e) {
+      msg.textContent = "Error al validar. Intenta de nuevo."; msg.className = "coupon-msg err";
+    }
+  }
+
+  // ── VALIDATE FORM ────────────────────────────────────
+  function getFormData() {
+    const fields = {
+      name: document.getElementById("chkName").value.trim(),
+      lastname: document.getElementById("chkLastname").value.trim(),
+      email: document.getElementById("chkEmail").value.trim(),
+      phone: document.getElementById("chkPhone").value.trim(),
+      street: document.getElementById("chkStreet").value.trim(),
+      colonia: document.getElementById("chkColonia").value.trim(),
+      city: document.getElementById("chkCity").value.trim(),
+      state: document.getElementById("chkState").value.trim(),
+      zip: document.getElementById("chkZip").value.trim(),
+    };
+    const missing = Object.entries(fields).find(([k,v]) => !v);
+    if (missing) { alert("Por favor completa todos los campos obligatorios."); return null; }
+    if (!/^\S+@\S+\.\S+$/.test(fields.email)) { alert("Correo inválido."); return null; }
+    if (!/^\d{10}$/.test(fields.phone.replace(/\D/g,""))) { alert("Teléfono inválido (10 dígitos)."); return null; }
+    if (!/^\d{5}$/.test(fields.zip)) { alert("Código postal inválido."); return null; }
+    return fields;
+  }
+
+  function getOrderPayload(fields) {
+    const subtotal = cart.reduce((a,i) => a + i.price*i.qty, 0);
+    const freeShip = subtotal >= FREE_SHIPPING;
+    const effectiveShipping = freeShip ? 0 : shippingCost;
+    const discountAmt = discountPct > 0 ? Math.round(subtotal * discountPct / 100) : 0;
+    const total = subtotal + effectiveShipping - discountAmt;
+    return {
+      items: cart,
+      buyer: fields,
+      shipping: { cost: effectiveShipping, type: shippingCost === 99 ? "Estándar" : "Express" },
+      coupon: couponCode || null,
+      discount: discountAmt,
+      subtotal, total
+    };
+  }
+
+  // ── MERCADOPAGO TARJETA ──────────────────────────────
+  async function pagarTarjeta() {
+    const fields = getFormData(); if (!fields) return;
+    const spin = document.getElementById("spinCard");
+    spin.style.display = "inline-block";
+    document.getElementById("btnCard").disabled = true;
+    try {
+      const payload = getOrderPayload(fields);
+      const res = await fetch("/.netlify/functions/create-preference", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...payload, method: "card" })
+      });
+      const data = await res.json();
+      if (data.init_point) window.location.href = data.init_point;
+      else throw new Error("Sin init_point");
+    } catch(e) {
+      alert("Error al procesar. Intenta de nuevo.");
+      spin.style.display = "none";
+      document.getElementById("btnCard").disabled = false;
+    }
+  }
+
+  // ── MERCADOPAGO OXXO ─────────────────────────────────
+  async function pagarOxxo() {
+    const fields = getFormData(); if (!fields) return;
+    const spin = document.getElementById("spinOxxo");
+    spin.style.display = "inline-block";
+    document.getElementById("btnOxxo").disabled = true;
+    try {
+      const payload = getOrderPayload(fields);
+      const res = await fetch("/.netlify/functions/create-preference", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...payload, method: "oxxo" })
+      });
+      const data = await res.json();
+      if (data.init_point) window.location.href = data.init_point;
+      else throw new Error("Sin init_point");
+    } catch(e) {
+      alert("Error al procesar. Intenta de nuevo.");
+      spin.style.display = "none";
+      document.getElementById("btnOxxo").disabled = false;
+    }
+  }
+
+  // ── PAYPAL ───────────────────────────────────────────
+  function initPayPal() {
+    if (typeof paypal === "undefined") return;
+    paypal.Buttons({
+      style: { layout: "horizontal", color: "gold", shape: "rect", label: "paypal", height: 45 },
+      createOrder: async (data, actions) => {
+        const fields = getFormData(); if (!fields) return;
+        const payload = getOrderPayload(fields);
+        const totalMXN = payload.total;
+        return actions.order.create({
+          purchase_units: [{
+            amount: { value: totalMXN.toFixed(2), currency_code: "MXN" },
+            description: "Herod Decants - Pedido"
+          }]
+        });
+      },
+      onApprove: async (data, actions) => {
+        const order = await actions.order.capture();
+        localStorage.removeItem("herod_cart");
+        alert("✅ Pago con PayPal exitoso. ¡Gracias por tu compra!");
+        window.location.href = "index.html";
+      },
+      onError: err => { alert("Error con PayPal. Intenta con otro método."); }
+    }).render("#paypalContainer");
+  }
+
+  init();
+</script>
+</body>
+</html>
