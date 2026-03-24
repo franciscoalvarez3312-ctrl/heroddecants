@@ -1216,53 +1216,22 @@
     .page-info { font-size: 0.75rem; color: var(--text-muted); padding: 0 0.5rem; }
 
   
-/* PAYMENT BUTTONS */
 .btn-checkout {
-  width: 100%;
-  background: #009ee3;
-  color: white;
-  border: none;
-  padding: 16px;
-  border-radius: var(--radius);
-  font-size: 0.92rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  transition: background var(--transition), transform var(--transition);
-  margin-bottom: 0.8rem;
-  cursor: pointer;
-  font-family: Inter, sans-serif;
+  width:100%;background:#009ee3;color:white;border:none;padding:16px;
+  border-radius:var(--radius);font-size:0.92rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:0.6rem;
+  transition:background var(--transition),transform var(--transition);
+  margin-bottom:0.8rem;cursor:pointer;font-family:Inter,sans-serif;
 }
-.btn-checkout:hover {
-  background: #007bb5;
-  transform: translateY(-1px);
-}
+.btn-checkout:hover{background:#007bb5;transform:translateY(-1px);}
 .btn-paypal {
-  width: 100%;
-  background: #ffc439;
-  color: #003087;
-  border: none;
-  padding: 16px;
-  border-radius: var(--radius);
-  font-size: 0.92rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  transition: background var(--transition), transform var(--transition);
-  margin-bottom: 0.8rem;
-  cursor: pointer;
-  font-family: Inter, sans-serif;
+  width:100%;background:#ffc439;color:#003087;border:none;padding:16px;
+  border-radius:var(--radius);font-size:0.92rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:0.6rem;
+  transition:background var(--transition),transform var(--transition);
+  margin-bottom:0.8rem;cursor:pointer;font-family:Inter,sans-serif;
 }
-.btn-paypal:hover {
-  background: #f0b429;
-  transform: translateY(-1px);
-}
+.btn-paypal:hover{background:#f0b429;transform:translateY(-1px);}
 </style>
 </head>
 <body>
@@ -3017,51 +2986,97 @@ async function initMP() {
   mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "es-MX" });
 }
 
-// PayPal button
 document.getElementById('paypalBtn').addEventListener('click', () => {
   if (!cart.length) { showToast('Tu carrito está vacío'); return; }
   const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const discount = couponApplied ? Math.round(total * 0.10) : 0;
   const finalTotal = total - discount + (total >= FREE_SHIPPING ? 0 : SHIPPING_COST);
-  const url = `https://www.paypal.com/paypalme/TU_USUARIO_PAYPAL/${finalTotal}`;
-  window.open(url, '_blank');
+  window.open('https://www.paypal.com/paypalme/TU_USUARIO_PAYPAL/' + finalTotal, '_blank');
 });
 
 document.getElementById("mpBtn").addEventListener("click", async () => {
   if (!cart.length) { showToast("Tu carrito está vacío"); return; }
-
   const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const discount = couponApplied ? Math.round(total * 0.10) : 0;
   const finalTotal = total - discount + (total >= FREE_SHIPPING ? 0 : SHIPPING_COST);
-
   const container = document.getElementById("mpContainer");
   container.style.cssText = "margin-top:1rem;";
-  container.innerHTML = "<p style='font-size:0.75rem;color:var(--text-sub);margin-bottom:0.5rem;text-align:center'><i class='fas fa-spinner fa-spin'></i> Redirigiendo a MercadoPago...</p>";
-
+  container.innerHTML = "<p style='font-size:0.75rem;color:var(--text-sub);text-align:center'><i class='fas fa-spinner fa-spin'></i> Redirigiendo...</p>";
   try {
     const items = cart.map(i => ({
-      title: `${i.brand} - ${i.name} ${i.size}ml`,
+      title: i.brand + " - " + i.name + " " + i.size + "ml",
       quantity: i.qty,
       unit_price: i.price,
       currency_id: "MXN"
     }));
-
     const res = await fetch("/.netlify/functions/create-preference", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ items })
     });
-
     const data = await res.json();
-
     if (data.init_point) {
       window.location.href = data.init_point;
-    } else {
-      throw new Error("No init_point");
-    }
+    } else { throw new Error("No init_point"); }
   } catch(e) {
-    container.innerHTML = "<p style='font-size:0.78rem;color:#e55;text-align:center'>Error al conectar con MercadoPago. Intenta de nuevo.</p>";
+    container.innerHTML = "<p style='font-size:0.78rem;color:#e55;text-align:center'>Error. Intenta de nuevo.</p>";
   }
-});
+})
 
-});
+}); // end DOMContentLoaded
+</script>
+
+
+
+<!-- PASSWORD MODAL -->
+<div id="pwModal" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);align-items:center;justify-content:center">
+  <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;padding:2.5rem;width:min(360px,90vw);text-align:center">
+    <div style="font-size:2rem;margin-bottom:1rem">🔒</div>
+    <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;color:#f0ece4;margin-bottom:0.5rem">Área de administración</h3>
+    <p style="font-size:0.78rem;color:#8a7d6e;margin-bottom:1.5rem">Ingresa tu contraseña para continuar</p>
+    <input id="pwInput" type="password" placeholder="Contraseña" style="width:100%;background:#141414;border:1px solid #2a2a2a;color:#f0ece4;padding:11px 14px;border-radius:4px;font-size:0.9rem;outline:none;margin-bottom:0.6rem;box-sizing:border-box;font-family:'Inter',sans-serif"/>
+    <p id="pwError" style="display:none;color:#e55;font-size:0.75rem;margin-bottom:0.8rem">Contraseña incorrecta. Intenta de nuevo.</p>
+    <div style="display:flex;gap:0.7rem;margin-top:0.5rem">
+      <button id="pwCancel" style="flex:1;padding:11px;background:none;border:1px solid #2a2a2a;color:#8a7d6e;border-radius:4px;cursor:pointer;font-size:0.78rem;font-family:'Inter',sans-serif">Cancelar</button>
+      <button id="pwConfirm" style="flex:1;padding:11px;background:#c9a96e;border:none;color:#0a0a0a;border-radius:4px;cursor:pointer;font-size:0.78rem;font-weight:600;font-family:'Inter',sans-serif">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<!-- REGISTER MODAL -->
+<div class="register-modal-overlay" id="registerModal">
+  <div class="register-modal">
+    <!-- Form view -->
+    <div id="regFormView">
+      <div class="register-icon"><i class="fas fa-gift"></i></div>
+      <h2>10% en tu primera compra</h2>
+      <p class="reg-sub">Regístrate y recibe tu código de descuento exclusivo directo en tu correo.</p>
+      
+      <div class="reg-form">
+        <input class="reg-input" id="regName" type="text" placeholder="Tu nombre" autocomplete="name"/>
+        <input class="reg-input" id="regEmail" type="email" placeholder="Tu correo electrónico" autocomplete="email"/>
+        <div class="reg-error" id="regError"></div>
+        <button class="btn-register" id="regSubmit">
+          <i class="fas fa-envelope" style="margin-right:6px"></i>Recibir mi código
+        </button>
+      </div>
+      <button class="reg-skip" id="regSkip">Ahora no, seguir navegando</button>
+    </div>
+    <!-- Success view -->
+    <div class="reg-success" id="regSuccessView">
+      <div class="reg-success-icon">🎉</div>
+      <h3>¡Código enviado!</h3>
+      <p>Revisa tu correo <strong id="regEmailConfirm"></strong>. En breve recibirás tu código exclusivo de bienvenida. 🎉</p>
+      <button class="btn-register" id="regClose" style="margin-top:1.2rem">
+        <i class="fas fa-compass" style="margin-right:6px"></i>Explorar colección
+      </button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
