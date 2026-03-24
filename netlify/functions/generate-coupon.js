@@ -1,6 +1,6 @@
 const https = require("https");
 
-const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_URL = "https://yxmmnomewbbfajigehgb.supabase.co";
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
 exports.handler = async function(event) {
