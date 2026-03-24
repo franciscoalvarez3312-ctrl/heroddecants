@@ -3030,139 +3030,38 @@ document.getElementById('paypalBtn').addEventListener('click', () => {
 document.getElementById("mpBtn").addEventListener("click", async () => {
   if (!cart.length) { showToast("Tu carrito está vacío"); return; }
 
-  await initMP();
-
-  // Build order description
-  const items = cart.map(i => `${i.name} ${i.size}ml x${i.qty}`).join(", ");
   const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const discount = couponApplied ? Math.round(total * 0.10) : 0;
   const finalTotal = total - discount + (total >= FREE_SHIPPING ? 0 : SHIPPING_COST);
 
-  // Show payment container
   const container = document.getElementById("mpContainer");
   container.style.cssText = "margin-top:1rem;";
-  container.innerHTML = "<p style='font-size:0.75rem;color:var(--text-sub);margin-bottom:0.5rem;text-align:center'><i class='fas fa-spinner fa-spin'></i> Cargando opciones de pago...</p>";
+  container.innerHTML = "<p style='font-size:0.75rem;color:var(--text-sub);margin-bottom:0.5rem;text-align:center'><i class='fas fa-spinner fa-spin'></i> Redirigiendo a MercadoPago...</p>";
 
   try {
-    const bricksBuilder = mp.bricks();
-    if (mpBrick) { mpBrick.unmount(); }
+    const items = cart.map(i => ({
+      title: `${i.brand} - ${i.name} ${i.size}ml`,
+      quantity: i.qty,
+      unit_price: i.price,
+      currency_id: "MXN"
+    }));
 
-    mpBrick = await bricksBuilder.create("payment", "mpContainer", {
-      initialization: {
-        amount: finalTotal,
-        preferenceId: null,
-      },
-      customization: {
-        paymentMethods: {
-          creditCard: "all",
-          debitCard: "all",
-          ticket: "all",
-        },
-        visual: {
-          style: {
-            theme: "dark",
-            customVariables: {
-              baseColor: "#c9a96e",
-              baseColorFirstVariant: "#b8935a",
-              baseColorSecondVariant: "#a07840",
-              fontSizeBase: "14px",
-            }
-          }
-        }
-      },
-      callbacks: {
-        onReady: () => {
-          container.querySelector("p") && (container.querySelector("p").style.display = "none");
-        },
-        onSubmit: async ({ selectedPaymentMethod, formData }) => {
-          // Send to your backend or handle via MercadoPago Checkout Pro
-          // For now, show WhatsApp confirmation flow
-          showToast("Procesando pago...");
-          const waMsg = encodeURIComponent(
-            "Hola, acabo de realizar un pago por:\n" +
-            items + "\n" +
-            "Total: $" + finalTotal.toLocaleString("es-MX") + " MXN\n" +
-            "Por favor confirma mi pedido."
-          );
-          const waNumber = document.querySelector("a[href*='wa.me']")?.href.match(/wa\.me\/(\d+)/)?.[1] || "521234567890";
-          setTimeout(() => {
-            window.open("https://wa.me/" + waNumber + "?text=" + waMsg, "_blank");
-          }, 1500);
-        },
-        onError: (error) => {
-          console.error(error);
-          showToast("Error al cargar el pago. Intenta de nuevo.");
-        },
-      },
+    const res = await fetch("/.netlify/functions/create-preference", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items })
     });
+
+    const data = await res.json();
+
+    if (data.init_point) {
+      window.location.href = data.init_point;
+    } else {
+      throw new Error("No init_point");
+    }
   } catch(e) {
-    container.innerHTML = `
-      <div style="text-align:center;padding:1rem">
-        <p style="font-size:0.78rem;color:var(--text-sub);margin-bottom:1rem">
-          Para completar tu compra, escríbenos por WhatsApp con tu pedido:
-        </p>
-        <a href="https://wa.me/?text=${encodeURIComponent('Hola, quiero pedir: ' + items + ' - Total: $' + finalTotal.toLocaleString('es-MX') + ' MXN')}"
-           target="_blank" class="btn-primary" style="display:inline-flex;gap:0.5rem;padding:12px 24px">
-          <i class="fab fa-whatsapp"></i> Finalizar por WhatsApp
-        </a>
-      </div>`;
+    container.innerHTML = "<p style='font-size:0.78rem;color:#e55;text-align:center'>Error al conectar con MercadoPago. Intenta de nuevo.</p>";
   }
 });
 
-}); // end DOMContentLoaded
-</script>
-
-
-
-<!-- PASSWORD MODAL -->
-<div id="pwModal" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);align-items:center;justify-content:center">
-  <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;padding:2.5rem;width:min(360px,90vw);text-align:center">
-    <div style="font-size:2rem;margin-bottom:1rem">🔒</div>
-    <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;color:#f0ece4;margin-bottom:0.5rem">Área de administración</h3>
-    <p style="font-size:0.78rem;color:#8a7d6e;margin-bottom:1.5rem">Ingresa tu contraseña para continuar</p>
-    <input id="pwInput" type="password" placeholder="Contraseña" style="width:100%;background:#141414;border:1px solid #2a2a2a;color:#f0ece4;padding:11px 14px;border-radius:4px;font-size:0.9rem;outline:none;margin-bottom:0.6rem;box-sizing:border-box;font-family:'Inter',sans-serif"/>
-    <p id="pwError" style="display:none;color:#e55;font-size:0.75rem;margin-bottom:0.8rem">Contraseña incorrecta. Intenta de nuevo.</p>
-    <div style="display:flex;gap:0.7rem;margin-top:0.5rem">
-      <button id="pwCancel" style="flex:1;padding:11px;background:none;border:1px solid #2a2a2a;color:#8a7d6e;border-radius:4px;cursor:pointer;font-size:0.78rem;font-family:'Inter',sans-serif">Cancelar</button>
-      <button id="pwConfirm" style="flex:1;padding:11px;background:#c9a96e;border:none;color:#0a0a0a;border-radius:4px;cursor:pointer;font-size:0.78rem;font-weight:600;font-family:'Inter',sans-serif">Entrar</button>
-    </div>
-  </div>
-</div>
-
-<script src="https://sdk.mercadopago.com/js/v2"></script>
-<!-- EmailJS SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-
-<!-- REGISTER MODAL -->
-<div class="register-modal-overlay" id="registerModal">
-  <div class="register-modal">
-    <!-- Form view -->
-    <div id="regFormView">
-      <div class="register-icon"><i class="fas fa-gift"></i></div>
-      <h2>10% en tu primera compra</h2>
-      <p class="reg-sub">Regístrate y recibe tu código de descuento exclusivo directo en tu correo.</p>
-      
-      <div class="reg-form">
-        <input class="reg-input" id="regName" type="text" placeholder="Tu nombre" autocomplete="name"/>
-        <input class="reg-input" id="regEmail" type="email" placeholder="Tu correo electrónico" autocomplete="email"/>
-        <div class="reg-error" id="regError"></div>
-        <button class="btn-register" id="regSubmit">
-          <i class="fas fa-envelope" style="margin-right:6px"></i>Recibir mi código
-        </button>
-      </div>
-      <button class="reg-skip" id="regSkip">Ahora no, seguir navegando</button>
-    </div>
-    <!-- Success view -->
-    <div class="reg-success" id="regSuccessView">
-      <div class="reg-success-icon">🎉</div>
-      <h3>¡Código enviado!</h3>
-      <p>Revisa tu correo <strong id="regEmailConfirm"></strong>. En breve recibirás tu código exclusivo de bienvenida. 🎉</p>
-      <button class="btn-register" id="regClose" style="margin-top:1.2rem">
-        <i class="fas fa-compass" style="margin-right:6px"></i>Explorar colección
-      </button>
-    </div>
-  </div>
-</div>
-
-</body>
-</html>
+});
