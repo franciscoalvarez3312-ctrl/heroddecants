@@ -3,6 +3,10 @@ const https = require("https");
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
+exports.handler = async function(event) {
+  console.log("URL:", SUPABASE_URL);
+  console.log("KEY:", SUPABASE_KEY ? "OK" : "MISSING");
+
 function supabaseRequest(method, path, body = null) {
   return new Promise((resolve, reject) => {
     const url = new URL(SUPABASE_URL + path);
