@@ -5,7 +5,11 @@ exports.handler = async function (event) {
     return { statusCode: 405, body: "Method Not Allowed" };
   }
 
-  const ACCESS_TOKEN = "APP_USR-7282432580755708-032317-278fdcc05ec0be0382d79c31ec88a91b-3287638735";
+  const ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN;
+  if (!ACCESS_TOKEN) {
+    return { statusCode: 500, body: JSON.stringify({ error: "Token no configurado" }) };
+  }
+
   const { items } = JSON.parse(event.body);
 
   const preference = {
