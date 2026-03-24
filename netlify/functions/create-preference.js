@@ -10,11 +10,16 @@ exports.handler = async function (event) {
     return { statusCode: 500, body: JSON.stringify({ error: "Token no configurado" }) };
   }
 
-  const { items } = JSON.parse(event.body);
+  const { items, payer, shipments } = JSON.parse(event.body);
 
   const preference = {
     items: items,
-    payer: { email: "cliente@heroddecants.com" },
+    payer: {
+      name: payer?.name || "",
+      email: payer?.email || "cliente@heroddecants.com",
+      phone: { number: payer?.phone || "" }
+    },
+    shipments: shipments || {},
     back_urls: {
       success: "https://heroddecants.com?pago=exitoso",
       failure: "https://heroddecants.com?pago=fallido",
@@ -41,18 +46,25 @@ exports.handler = async function (event) {
       let body = "";
       res.on("data", (chunk) => body += chunk);
       res.on("end", () => {
-        const result = JSON.parse(body);
-        if (result.init_point) {
-          resolve({
-            statusCode: 200,
-            headers: { "Access-Control-Allow-Origin": "*" },
-            body: JSON.stringify({ init_point: result.init_point })
-          });
-        } else {
-          resolve({
-            statusCode: 500,
-            body: JSON.stringify({ error: "No se pudo crear la preferencia", detail: result })
-          });
+        try {
+          const result = JSON.parse(body);
+          if (result.init_point) {
+            resolve({
+              statusCode: 200,
+              headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ init_point: result.init_point })
+            });
+          } else {
+            resolve({
+              statusCode: 500,
+              body: JSON.stringify({ error: "No se pudo crear la preferencia", detail: result })
+            });
+          }
+        } catch(e) {
+          resolve({ statusCode: 500, body: JSON.stringify({ error: "Error parsing response" }) });
         }
       });
     });
