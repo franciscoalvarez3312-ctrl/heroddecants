@@ -1502,21 +1502,9 @@
       <div class="cart-row"><span>Envío</span><span id="cartShipping">$99</span></div>
       <div class="cart-row total"><span>Total</span><span id="cartTotal">$0</span></div>
     </div>
-    <div id="buyerForm" style="margin-bottom:1rem;">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin-bottom:0.6rem;">
-    <input id="buyerName" type="text" placeholder="Nombre *" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:0.82rem;font-family:Inter,sans-serif;outline:none;width:100%;box-sizing:border-box;">
-    <input id="buyerPhone" type="tel" placeholder="Teléfono *" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:0.82rem;font-family:Inter,sans-serif;outline:none;width:100%;box-sizing:border-box;">
-  </div>
-  <input id="buyerEmail" type="email" placeholder="Correo electrónico *" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:0.82rem;font-family:Inter,sans-serif;outline:none;width:100%;box-sizing:border-box;margin-bottom:0.6rem;">
-  <input id="buyerAddress" type="text" placeholder="Dirección completa *" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:0.82rem;font-family:Inter,sans-serif;outline:none;width:100%;box-sizing:border-box;margin-bottom:0.6rem;">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;">
-    <input id="buyerCity" type="text" placeholder="Ciudad *" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:0.82rem;font-family:Inter,sans-serif;outline:none;width:100%;box-sizing:border-box;">
-    <input id="buyerZip" type="text" placeholder="Código postal *" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:0.82rem;font-family:Inter,sans-serif;outline:none;width:100%;box-sizing:border-box;">
-  </div>
-</div>
-<button class="btn-checkout" id="mpBtn">
-  <i class="fas fa-credit-card"></i> Pagar con tarjeta / OXXO
-</button>
+    <button class="btn-checkout" id="mpBtn">
+          <i class="fas fa-credit-card"></i> Pagar con tarjeta / OXXO
+        </button>
         <div id="mpContainer"></div>
     <p class="secure-note"><i class="fas fa-lock"></i>&nbsp;Pago 100% seguro · Protegido por PayPal</p>
   </div>
@@ -1567,13 +1555,6 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-  emailjs.init(EJS_PUBLIC_KEY);
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get("pago") === "exitoso") {
-    cart = []; localStorage.removeItem("herod_cart"); renderCart();
-    showToast("¡Pago exitoso! Gracias por tu compra 🎉");
-  }
-
 // ── DATA ─────────────────────────────────────────────────────────
 const FREE_SHIPPING = 1499;
 const SHIPPING_COST = 99;
@@ -2760,9 +2741,9 @@ function renderAdminSettings(body) {
 // 3. Crea un Email Template con las variables: {{to_name}}, {{to_email}}, {{discount_code}}
 // 4. Copia tu Public Key de Account > API Keys
 // Reemplaza los 3 valores de abajo:
-const EJS_SERVICE_ID = "service_f11f6dc";   // ej. "service_abc123"
-const EJS_TEMPLATE_ID = "template_bn9a0ps";  // ej. "template_xyz456"
-const EJS_PUBLIC_KEY = "HUJtY9ND4ZeSJB1UR";   // ej. "aBcDeFgHiJkLmN"
+const EJS_SERVICE_ID = "service_f11f6dc";
+const EJS_TEMPLATE_ID = "template_bn9a0ps";
+const EJS_PUBLIC_KEY = "HUJtY9ND4ZeSJB1UR";
 const DISCOUNT_CODE   = "HEROD10";
 
 // Show register modal after 8 seconds if user hasn't registered
@@ -2807,29 +2788,11 @@ document.getElementById("regSubmit").addEventListener("click", async () => {
     if (EJS_PUBLIC_KEY !== "") {
       // Real EmailJS send
       emailjs.init(EJS_PUBLIC_KEY);
-      await emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
+      await emailjs.init(EJS_PUBLIC_KEY);
+      emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
         to_email: email,
         email_subject: "🎉 Tu cupón de bienvenida - Herod Decants",
-        html_content: `<div style="max-width:520px;margin:40px auto;background:#242424;border-radius:12px;overflow:hidden;border:1px solid #333;font-family:Inter,Arial,sans-serif;">
-          <div style="background:linear-gradient(135deg,#1a1a1a,#2d2d2d);padding:32px;text-align:center;border-bottom:2px solid #c9a84c;">
-            <h1 style="margin:0;font-size:1.8rem;color:#fff;letter-spacing:2px;"><span style="color:#c9a84c;">HEROD</span> <em>Decants</em></h1>
-            <p style="margin:6px 0 0;color:#999;font-size:0.8rem;letter-spacing:1px;">PERFUMERÍA DE NICHO</p>
-          </div>
-          <div style="padding:32px;">
-            <p style="color:#fff;font-size:1.1rem;margin:0 0 8px;">Hola <strong style="color:#c9a84c;">${name}</strong> 👋</p>
-            <p style="color:#ccc;font-size:0.9rem;margin:0 0 24px;">Gracias por registrarte. Aquí está tu cupón exclusivo de bienvenida:</p>
-            <div style="background:#1a1a1a;border:2px dashed #c9a84c;border-radius:10px;padding:24px;text-align:center;margin:24px 0;">
-              <p style="color:#999;font-size:0.78rem;margin:0 0 8px;letter-spacing:2px;">🎁 TU CUPÓN DE DESCUENTO</p>
-              <p style="color:#c9a84c;font-size:2rem;font-weight:700;margin:0;letter-spacing:4px;">${DISCOUNT_CODE}</p>
-              <p style="color:#666;font-size:0.75rem;margin:8px 0 0;">Úsalo en tu próxima compra</p>
-            </div>
-            <p style="color:#ccc;font-size:0.85rem;text-align:center;">Visita <a href="https://heroddecants.com" style="color:#c9a84c;text-decoration:none;">heroddecants.com</a> y aplícalo en tu carrito.</p>
-          </div>
-          <div style="background:#1a1a1a;padding:20px;text-align:center;border-top:1px solid #333;">
-            <p style="margin:0;color:#666;font-size:0.78rem;">¿Dudas? <a href="mailto:heroddecants@gmail.com" style="color:#c9a84c;text-decoration:none;">heroddecants@gmail.com</a></p>
-            <p style="margin:6px 0 0;color:#444;font-size:0.72rem;">— Herod Decants · Perfumería de nicho</p>
-          </div>
-        </div>`
+        html_content: '<div style="max-width:520px;margin:40px auto;background:#242424;border-radius:12px;overflow:hidden;border:1px solid #333;font-family:Inter,Arial,sans-serif;"><div style="background:linear-gradient(135deg,#1a1a1a,#2d2d2d);padding:32px;text-align:center;border-bottom:2px solid #c9a84c;"><h1 style="margin:0;font-size:1.8rem;color:#fff;letter-spacing:2px;"><span style="color:#c9a84c;">HEROD</span> <em>Decants</em></h1><p style="margin:6px 0 0;color:#999;font-size:0.8rem;letter-spacing:1px;">PERFUMERÍA DE NICHO</p></div><div style="padding:32px;"><p style="color:#fff;font-size:1.1rem;margin:0 0 8px;">Hola <strong style="color:#c9a84c;">' + name + '</strong> 👋</p><p style="color:#ccc;font-size:0.9rem;margin:0 0 24px;">Gracias por registrarte. Aquí está tu cupón exclusivo:</p><div style="background:#1a1a1a;border:2px dashed #c9a84c;border-radius:10px;padding:24px;text-align:center;margin:24px 0;"><p style="color:#999;font-size:0.78rem;margin:0 0 8px;letter-spacing:2px;">🎁 TU CUPÓN DE DESCUENTO</p><p style="color:#c9a84c;font-size:2rem;font-weight:700;margin:0;letter-spacing:4px;">' + DISCOUNT_CODE + '</p><p style="color:#666;font-size:0.75rem;margin:8px 0 0;">Úsalo en tu próxima compra</p></div><p style="color:#ccc;font-size:0.85rem;text-align:center;">Visita <a href=\"https://heroddecants.com\" style=\"color:#c9a84c;text-decoration:none;\">heroddecants.com</a></p></div><div style="background:#1a1a1a;padding:20px;text-align:center;border-top:1px solid #333;"><p style="margin:0;color:#666;font-size:0.78rem;">¿Dudas? <a href=\"mailto:heroddecants@gmail.com\" style=\"color:#c9a84c;text-decoration:none;\">heroddecants@gmail.com</a></p><p style="margin:6px 0 0;color:#444;font-size:0.72rem;">— Herod Decants · Perfumería de nicho</p></div></div>'
       });
     }
     // Mark as registered
@@ -3002,63 +2965,9 @@ async function initMP() {
   mp = new MercadoPago(MP_PUBLIC_KEY, { locale: "es-MX" });
 }
 
-document.
-function sendOrderEmails(buyer, orderItems, subtotal, shipping, total, paymentMethod) {
-  const orderHTML = `<div style="max-width:520px;margin:40px auto;background:#242424;border-radius:12px;overflow:hidden;border:1px solid #333;font-family:Inter,Arial,sans-serif;">
-    <div style="background:linear-gradient(135deg,#1a1a1a,#2d2d2d);padding:32px;text-align:center;border-bottom:2px solid #c9a84c;">
-      <h1 style="margin:0;font-size:1.8rem;color:#fff;letter-spacing:2px;"><span style="color:#c9a84c;">HEROD</span> <em>Decants</em></h1>
-      <p style="margin:6px 0 0;color:#999;font-size:0.8rem;letter-spacing:1px;">PERFUMERÍA DE NICHO</p>
-    </div>
-    <div style="padding:32px;">
-      <p style="color:#fff;font-size:1.1rem;margin:0 0 8px;">Hola <strong style="color:#c9a84c;">${buyer.name}</strong> 👋</p>
-      <p style="color:#ccc;font-size:0.9rem;margin:0 0 24px;">Hemos recibido tu pedido. En breve coordinamos tu envío.</p>
-      <div style="background:#1a1a1a;border-radius:10px;padding:20px;margin-bottom:20px;">
-        <p style="color:#c9a84c;font-size:0.78rem;letter-spacing:2px;margin:0 0 12px;">📦 TU PEDIDO</p>
-        <p style="color:#ccc;font-size:0.85rem;white-space:pre-line;margin:0;">${orderItems}</p>
-      </div>
-      <table style="width:100%;border-collapse:collapse;">
-        <tr><td style="color:#999;font-size:0.85rem;padding:6px 0;">Subtotal</td><td style="color:#fff;text-align:right;">$${subtotal.toLocaleString("es-MX")} MXN</td></tr>
-        <tr><td style="color:#999;font-size:0.85rem;padding:6px 0;">Envío</td><td style="color:#fff;text-align:right;">${shipping === 0 ? "🎉 GRATIS" : "$" + shipping.toLocaleString("es-MX") + " MXN"}</td></tr>
-        <tr style="border-top:1px solid #333;"><td style="color:#c9a84c;font-weight:700;padding-top:10px;">Total</td><td style="color:#c9a84c;font-weight:700;text-align:right;padding-top:10px;">$${total.toLocaleString("es-MX")} MXN</td></tr>
-      </table>
-      <div style="background:#1a1a1a;border-radius:8px;padding:16px;margin-top:20px;">
-        <p style="color:#999;font-size:0.78rem;margin:0 0 6px;">💳 Pago: <span style="color:#fff;">${paymentMethod}</span></p>
-        <p style="color:#999;font-size:0.78rem;margin:0;">📍 Envío a: <span style="color:#fff;">${buyer.address}, ${buyer.city} ${buyer.zip} · Tel: ${buyer.phone}</span></p>
-      </div>
-    </div>
-    <div style="background:#1a1a1a;padding:20px;text-align:center;border-top:1px solid #333;">
-      <p style="margin:0;color:#666;font-size:0.78rem;">¿Dudas? <a href="mailto:heroddecants@gmail.com" style="color:#c9a84c;text-decoration:none;">heroddecants@gmail.com</a></p>
-      <p style="margin:6px 0 0;color:#444;font-size:0.72rem;">— Herod Decants · Perfumería de nicho</p>
-    </div>
-  </div>`;
-  // Email al admin
-  emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
-    to_email: "heroddecants@gmail.com",
-    email_subject: "🔔 Nuevo pedido de " + buyer.name,
-    html_content: orderHTML
-  }).catch(e => console.error("EmailJS admin:", e));
-  // Email al cliente
-  emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
-    to_email: buyer.email,
-    email_subject: "✅ Tu pedido está confirmado - Herod Decants",
-    html_content: orderHTML
-  }).catch(e => console.error("EmailJS client:", e));
-}
-
-function validateBuyerForm() {
-  const name    = document.getElementById('buyerName') ? document.getElementById('buyerName').value.trim() : '';
-  const phone   = document.getElementById('buyerPhone') ? document.getElementById('buyerPhone').value.trim() : '';
-  const email   = document.getElementById('buyerEmail') ? document.getElementById('buyerEmail').value.trim() : '';
-  const address = document.getElementById('buyerAddress') ? document.getElementById('buyerAddress').value.trim() : '';
-  const city    = document.getElementById('buyerCity') ? document.getElementById('buyerCity').value.trim() : '';
-  const zip     = document.getElementById('buyerZip') ? document.getElementById('buyerZip').value.trim() : '';
-  if (!name||!phone||!email||!address||!city||!zip) { showToast('Por favor completa todos tus datos de envío'); return null; }
-  if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) { showToast('Ingresa un correo válido'); return null; }
-  return { name, phone, email, address, city, zip };
-}
-getElementById("mpBtn").addEventListener("click", async () => {
+document.getElementById("mpBtn").addEventListener("click", async () => {
   if (!cart.length) { showToast("Tu carrito está vacío"); return; }
-  const buyer = validateBuyerForm(); if (!buyer) return;
+
   await initMP();
 
   // Build order description
@@ -3066,9 +2975,6 @@ getElementById("mpBtn").addEventListener("click", async () => {
   const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const discount = couponApplied ? Math.round(total * 0.10) : 0;
   const finalTotal = total - discount + (total >= FREE_SHIPPING ? 0 : SHIPPING_COST);
-  const shipping = total >= FREE_SHIPPING ? 0 : SHIPPING_COST;
-  const orderItems = cart.map(i => i.brand + " - " + i.name + " " + i.size + "ml x" + i.qty + " = $" + (i.price * i.qty).toLocaleString("es-MX") + " MXN").join("\n");
-  sendOrderEmails(buyer, orderItems, total, shipping, finalTotal, "Tarjeta / OXXO (MercadoPago)");
 
   // Show payment container
   const container = document.getElementById("mpContainer");
