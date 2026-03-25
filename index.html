@@ -3410,32 +3410,7 @@ document.getElementById("mpBtn").addEventListener("click", async () => {
 
 }); // end DOMContentLoaded
 </script>
-<script>
-async function revisarPagoMercadoPago() {
-  emailjs.init("HUJty9ND4ZeSJB1UR");
-    const urlParams = new URLSearchParams(window.location.search);
-    const status = urlParams.get('status'); 
 
-    if (status === 'approved' || status === 'pending') {
-        // Quitamos el candado del carrito para que la prueba funcione SIEMPRE
-        try {
-            await emailjs.send("service_f11f6dc", "template_bn9a0ps", {
-                email_subject: "✅ VENTA CONFIRMADA (MercadoPago/OXXO)",
-                to_email: "heroddecants@gmail.com",
-                html_content: "¡Felicidades! Un cliente ha completado su pago en MercadoPago. Revisa tu panel para detalles."
-            });
-            
-            alert("¡Pago detectado con éxito! Se ha enviado el aviso al administrador.");
-            window.history.replaceState({}, document.title, window.location.pathname);
-        } catch (error) {
-            console.error("Error EmailJS:", error);
-        }
-    }
-}
-
-// Lo ejecutamos en cuanto cargue este script
-revisarPagoMercadoPago();
-</script>
 
 
 
@@ -3488,5 +3463,31 @@ revisarPagoMercadoPago();
   </div>
 </div>
 
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
+<script>
+async function revisarPagoMercadoPago() {
+  emailjs.init("HUJty9ND4ZeSJB1UR");
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status'); 
+
+    if (status === 'approved' || status === 'pending') {
+        // Quitamos el candado del carrito para que la prueba funcione SIEMPRE
+        try {
+            await emailjs.send("service_f11f6dc", "template_bn9a0ps", {
+                email_subject: "✅ VENTA CONFIRMADA (MercadoPago/OXXO)",
+                to_email: "heroddecants@gmail.com",
+                html_content: "¡Felicidades! Un cliente ha completado su pago en MercadoPago. Revisa tu panel para detalles."
+            });
+            
+            alert("¡Pago detectado con éxito! Se ha enviado el aviso al administrador.");
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } catch (error) {
+            console.error("Error EmailJS:", error);
+        }
+    }
+}
+// En lugar de llamarla directo, esperamos un segundo
+setTimeout(revisarPagoMercadoPago, 1000);
+</script>
 </body></html>
