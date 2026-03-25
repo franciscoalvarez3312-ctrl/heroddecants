@@ -1,4 +1,6 @@
 const https = require("https");
+const { createClient } = require("@supabase/supabase-js");
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 // LA FUENTE DE LA VERDAD: Catálogo de precios seguro
 const CATALOGO_PRECIOS = {
@@ -110,14 +112,34 @@ exports.handler = async function (event) {
   }
 
   // 2. Evaluamos el cupón
-  if (body.coupon === "HEROD10") {
-    const descuentoReal = Math.round(subtotalReal * 0.10);
-    mpItems.push({
-      title: "Descuento código HEROD10",
-      quantity: 1,
-      unit_price: -descuentoReal,
-      currency_id: "MXN"
-    });
+ // 2. Evaluamos el cupón conectado a Supabase
+  if (body.coupon) {
+    const { data: cuponData, error } = await supabase
+      .from("cupones")
+      .select("*")
+      .eq("codigo", body.coupon.toUpperCase().trim())
+      .single();
+
+    // Verificamos que exista y no esté usado
+    if (cuponData && !cuponData.usado) {
+      // Validamos si es un cupón amarrado a un email
+      const emailValido = !cuponData.email || (body.buyer?.email && cuponData.email.toLowerCase() === body.buyer.email.toLowerCase());
+      
+      if (emailValido) {
+        const porcentaje = cuponData.descuento || 10;
+        const descuentoReal = Math.round(subtotalReal * (porcentaje / 100));
+        
+        mpItems.push({
+          title: `Descuento cupón ${cuponData.codigo}`,
+          quantity: 1,
+          unit_price: -descuentoReal,
+          currency_id: "MXN"
+        });
+
+        // Opcional: Marcar el cupón como usado en la base de datos automáticamente
+        // await supabase.from('cupones').update({ usado: true }).eq('codigo', cuponData.codigo);
+      }
+    }
   }
 
   // 3. Evaluamos el envío
