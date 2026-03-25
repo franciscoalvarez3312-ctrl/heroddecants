@@ -2539,6 +2539,7 @@ function renderFilters() {
 // ── MODAL ────────────────────────────────────────────────────────
 function openModal(id) {
   currentProduct = perfumes.find(p => p.id === id);
+  actualizarBotónWhatsApp(currentProduct.name, currentProduct.brand);
   selectedSize = 5;
   const mo = document.getElementById("modalOverlay");
   document.getElementById("modalContent").innerHTML = `
@@ -2728,10 +2729,14 @@ document.getElementById("navSearch").addEventListener("input", e => {
 // ── EVENTS ───────────────────────────────────────────────────────
 document.getElementById("cartToggle").addEventListener("click", openCart);
 document.getElementById("cartClose").addEventListener("click", closeCart);
-document.getElementById("modalClose").addEventListener("click", closeModal);
-document.getElementById("overlay").addEventListener("click", () => { closeCart(); closeModal(); });
+document.getElementById("modalClose").addEventListener("click", () => { closeModal(); resetearWhatsApp(); });document.getElementById("overlay").addEventListener("click", () => { closeCart(); closeModal(); });
 document.getElementById("modalOverlay").addEventListener("click", e => { if(e.target === document.getElementById("modalOverlay")) closeModal(); });
-
+document.getElementById("modalOverlay").addEventListener("click", e => { 
+    if(e.target === document.getElementById("modalOverlay")) { 
+        closeModal(); 
+        resetearWhatsApp(); 
+    } 
+});
 
 // ── POPULAR SLIDER ──────────────────────────────────────────────
 function imgOrEmoji(p, cls="") {
@@ -3489,5 +3494,19 @@ async function revisarPagoMercadoPago() {
 }
 // En lugar de llamarla directo, esperamos un segundo
 setTimeout(revisarPagoMercadoPago, 1000);
+
+function actualizarBotónWhatsApp(nombre, marca) {
+    const waBtn = document.querySelector('.wa-btn');
+    const telefono = "524773846682";
+    const mensaje = encodeURIComponent(`¡Hola Herod Decants! 👋 Me interesa el decant de: *${marca} - ${nombre}*. ¿Tienen disponibilidad?`);
+    
+    waBtn.href = `https://wa.me/${telefono}?text=${mensaje}`;
+}
+
+// Y una función para resetearlo al mensaje general si cierran el modal
+function resetearWhatsApp() {
+    const waBtn = document.querySelector('.wa-btn');
+    waBtn.href = "https://wa.me/524773846682?text=Hola,%20me%20interesa%20un%20decant";
+}
 </script>
 </body></html>
