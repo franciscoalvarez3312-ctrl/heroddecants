@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;1,400&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <script src="https://sdk.mercadopago.com/js/v2"></script>
-  <script src="https://www.paypal.com/sdk/js?client-id=TU_PAYPAL_CLIENT_ID&currency=MXN"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=test&currency=MXN"></script>
   <style>
     :root {
       --gold: #c9a84c;
@@ -241,7 +241,6 @@
           <div class="spinner" id="spinOxxo"></div>
         </button>
         <div id="mpBrickContainer"></div>
-        <div id="paypalContainer"></div>
       </div>
       <p class="secure-note"><i class="fas fa-lock"></i> Pago 100% seguro</p>
     </div>
@@ -268,7 +267,7 @@
   function init() {
     if (!cart.length) { window.location.href = "index.html"; return; }
     renderSummary();
-    initPayPal();
+   // initPayPal();
   }
 
   // ── RENDER SUMMARY ───────────────────────────────────
@@ -372,7 +371,8 @@
     const missing = Object.entries(fields).find(([k,v]) => !v);
     if (missing) { alert("Por favor completa todos los campos obligatorios."); return null; }
     if (!/^\S+@\S+\.\S+$/.test(fields.email)) { alert("Correo inválido."); return null; }
-    if (!/^\d{10}$/.test(fields.phone.replace(/\D/g,""))) { alert("Teléfono inválido (10 dígitos)."); return null; }
+    const cleanPhone = fields.phone.replace(/\D/g, "");
+if (cleanPhone.length < 10) { alert("Teléfono inválido (mínimo 10 dígitos)."); return null; }
     if (!/^\d{5}$/.test(fields.zip)) { alert("Código postal inválido."); return null; }
     return fields;
   }
