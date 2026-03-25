@@ -84,76 +84,165 @@ const ENVIO_COSTO = 99;
 const ENVIO_GRATIS_DESDE = 1499;
 
 exports.handler = async function (event) {
+  // 1. Manejo de CORS (Seguridad del navegador)
+  const headers = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS"
+  };
+
+  if (event.httpMethod === "OPTIONS") {
+    return { statusCode: 200, headers, body: "" };
+  }
+
   if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
+    return { statusCode: 405, headers, body: "Method Not Allowed" };
   }
 
-  const ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN;
-  if (!ACCESS_TOKEN) {
-    return { statusCode: 500, body: JSON.stringify({ error: "Token no configurado" }) };
-  }
+  try {
+    const ACCESS_TOKEN = process.env.MP_ACCESS_TOKEN;
+    if (!ACCESS_TOKEN) throw new Error("Token no configurado en Netlify");
 
-  const body = JSON.parse(event.body);
-  const cartDelFrontend = body.items || [];
-  
-  let subtotalReal = 0;
-  const mpItems = [];
-
-  // 1. Armamos los items de forma segura
-  for (const item of cartDelFrontend) {
-    if (!CATALOGO_PRECIOS[item.id] || !CATALOGO_PRECIOS[item.id][item.size]) {
-      return { statusCode: 400, body: JSON.stringify({ error: `Perfume ID ${item.id} o tamaño ${item.size} inválido` }) };
+    // 2. Inicializamos Supabase DENTRO del handler para evitar crashes
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_KEY;
+    let supabase = null;
+    if (supabaseUrl && supabaseKey) {
+      supabase = createClient(supabaseUrl, supabaseKey);
     }
-    
-    const precioReal = CATALOGO_PRECIOS[item.id][item.size];
-    subtotalReal += (precioReal * item.qty);
 
-    mpItems.push({
-      title: `${item.brand} ${item.name} ${item.size}ml`,
-      quantity: item.qty,
-      unit_price: precioReal,
-      currency_id: "MXN"
-    });
-  }
+    const body = JSON.parse(event.body);
+    const cartDelFrontend = body.items || [];
+    let subtotalReal = 0;
+    const mpItems = [];
 
-  // 2. Evaluamos el cupón conectado a Supabase
-  if (body.coupon) {
-    const { data: cuponData, error } = await supabase
-      .from("cupones")
-      .select("*")
-      .eq("codigo", body.coupon.toUpperCase().trim())
-      .single();
+    // 3. Armamos los items (Usando tu catálogo intacto de arriba)
+    for (const item of cartDelFrontend) {
+      if (!CATALOGO_PRECIOS[item.id] || !CATALOGO_PRECIOS[item.id][item.size]) {
+        throw new Error(`Perfume o tamaño inválido`);
+      }
+      const precioReal = CATALOGO_PRECIOS[item.id][item.size];
+      subtotalReal += (precioReal * item.qty);
 
-    if (cuponData && !cuponData.usado) {
-      const emailValido = !cuponData.email || (body.buyer?.email && cuponData.email.toLowerCase() === body.buyer.email.toLowerCase());
-      
-      if (emailValido) {
-        const porcentaje = cuponData.descuento || 10;
-        const descuentoReal = Math.round(subtotalReal * (porcentaje / 100));
-        
-        mpItems.push({
-          title: `Descuento cupón ${cuponData.codigo}`,
-          quantity: 1,
-          unit_price: -descuentoReal,
-          currency_id: "MXN"
-        });
+      mpItems.push({
+        title: `${item.brand} ${item.name} ${item.size}ml`,
+        quantity: item.qty,
+        unit_price: precioReal,
+        currency_id: "MXN"
+      });
+    }
+
+    // 4. Evaluamos el cupón en Supabase de forma segura
+    if (body.coupon && supabase) {
+      const { data: cuponData, error } = await supabase
+        .from("cupones")
+        .select("*")
+        .eq("codigo", body.coupon.toUpperCase().trim())
+        .single();
+
+      if (cuponData && !cuponData.usado) {
+        const emailValido = !cuponData.email || (body.buyer?.email && cuponData.email.toLowerCase() === body.buyer.email.toLowerCase());
+        if (emailValido) {
+          const porcentaje = cuponData.descuento || 10;
+          const descuentoReal = Math.round(subtotalReal * (porcentaje / 100));
+          mpItems.push({
+            title: `Descuento cupón ${cuponData.codigo}`,
+            quantity: 1,
+            unit_price: -descuentoReal,
+            currency_id: "MXN"
+          });
+        }
       }
     }
-  }
 
-  // 3. Evaluamos el envío
-  let costoEnvioFinal = 0;
-  if (body.shipping && body.shipping.type === "Express") {
-    costoEnvioFinal = 179;
-  } else if (subtotalReal < ENVIO_GRATIS_DESDE) {
-    costoEnvioFinal = ENVIO_COSTO;
-  }
+    // 5. Evaluamos el envío
+    let costoEnvioFinal = 0;
+    if (body.shipping && body.shipping.type === "Express") {
+      costoEnvioFinal = 179;
+    } else if (subtotalReal < ENVIO_GRATIS_DESDE) {
+      costoEnvioFinal = ENVIO_COSTO;
+    }
 
-  if (costoEnvioFinal > 0) {
-    mpItems.push({
-      title: body.shipping && body.shipping.type === "Express" ? "Envío Express" : "Envío Estándar",
-      quantity: 1,
-      unit_price: costoEnvioFinal,
-      currency_id: "MXN"
+    if (costoEnvioFinal > 0) {
+      mpItems.push({
+        title: body.shipping && body.shipping.type === "Express" ? "Envío Express" : "Envío Estándar",
+        quantity: 1,
+        unit_price: costoEnvioFinal,
+        currency_id: "MXN"
+      });
+    }
+
+    // 6. Creamos el objeto de preferencia
+    const preference = {
+      items: mpItems,
+      payer: {
+        name: body.buyer?.name || "",
+        surname: body.buyer?.lastname || "",
+        email: body.buyer?.email || "cliente@heroddecants.com",
+        phone: { number: body.buyer?.phone || "" }
+      },
+      back_urls: {
+        success: "https://heroddecants.com?pago=exitoso",
+        failure: "https://heroddecants.com?pago=fallido",
+        pending: "https://heroddecants.com?pago=pendiente"
+      },
+      auto_return: "approved",
+      statement_descriptor: "HEROD DECANTS",
+      payment_methods: { excluded_payment_types: [] }
+    };
+
+    if (body.method === "oxxo") {
+      preference.payment_methods.installments = 1;
+      preference.payment_methods.excluded_payment_types = [ { id: "credit_card" }, { id: "debit_card" } ];
+    } else if (body.method === "card") {
+       preference.payment_methods.excluded_payment_types = [ { id: "ticket" }, { id: "atm" } ];
+    }
+
+    // 7. Petición HTTPS a MercadoPago envuelta en Try/Catch
+    const mpResponse = await new Promise((resolve, reject) => {
+      const data = JSON.stringify(preference);
+      const options = {
+        hostname: "api.mercadopago.com",
+        path: "/checkout/preferences",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${ACCESS_TOKEN}`,
+          "Content-Length": Buffer.byteLength(data)
+        }
+      };
+
+      const req = https.request(options, (res) => {
+        let responseBody = "";
+        res.on("data", (chunk) => responseBody += chunk);
+        res.on("end", () => {
+          try {
+            const result = JSON.parse(responseBody);
+            if (result.init_point) {
+              resolve(result.init_point);
+            } else {
+              reject(new Error(JSON.stringify(result)));
+            }
+          } catch(e) { reject(new Error("Error decodificando MercadoPago")); }
+        });
+      });
+      req.on("error", (e) => reject(e));
+      req.write(data);
+      req.end();
     });
+
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({ init_point: mpResponse })
+    };
+
+  } catch (error) {
+    console.error("Error crítico en el backend:", error.message);
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ error: "Error en el servidor", detalle: error.message })
+    };
   }
+};
