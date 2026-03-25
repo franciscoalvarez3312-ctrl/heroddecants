@@ -3407,36 +3407,34 @@ document.getElementById("mpBtn").addEventListener("click", async () => {
   }
 });
 
-// --- DETECTOR DE REGRESO DE MERCADOPAGO ---
+
+}); // end DOMContentLoaded
+</script>
+<script>
 async function revisarPagoMercadoPago() {
+  emailjs.init("HUJty9ND4ZeSJB1UR");
     const urlParams = new URLSearchParams(window.location.search);
     const status = urlParams.get('status'); 
 
     if (status === 'approved' || status === 'pending') {
-        const cart = JSON.parse(localStorage.getItem("herod_cart")) || [];
-        if (cart.length === 0) return; 
-
+        // Quitamos el candado del carrito para que la prueba funcione SIEMPRE
         try {
-            // Usamos tus IDs que ya tienes definidos arriba en el archivo
-            await emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
-                to_name: "Admin Herod",
+            await emailjs.send("service_f11f6dc", "template_bn9a0ps", {
+                email_subject: "✅ VENTA CONFIRMADA (MercadoPago/OXXO)",
                 to_email: "heroddecants@gmail.com",
-                asunto: "✅ NUEVA VENTA MERCADOPAGO / OXXO",
-                mensaje_principal: "¡Felicidades! Se ha confirmado un pago de MercadoPago. Revisa tu panel para detalles de envío."
+                html_content: "¡Felicidades! Un cliente ha completado su pago en MercadoPago. Revisa tu panel para detalles."
             });
             
-            localStorage.removeItem("herod_cart");
-            alert("¡Pago recibido con éxito! Pronto procesaremos tu envío.");
+            alert("¡Pago detectado con éxito! Se ha enviado el aviso al administrador.");
             window.history.replaceState({}, document.title, window.location.pathname);
         } catch (error) {
-            console.error("Error al avisar de venta MP:", error);
+            console.error("Error EmailJS:", error);
         }
     }
 }
 
-// EJECUTAMOS LA REVISIÓN AL CARGAR LA PÁGINA
+// Lo ejecutamos en cuanto cargue este script
 revisarPagoMercadoPago();
-}); // end DOMContentLoaded
 </script>
 
 
