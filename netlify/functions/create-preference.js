@@ -1,6 +1,11 @@
 const https = require("https");
 const { createClient } = require("@supabase/supabase-js");
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+
+// 1. Inicializamos Supabase con tus variables de entorno
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
+);
 
 // LA FUENTE DE LA VERDAD: Catálogo de precios seguro
 const CATALOGO_PRECIOS = {
@@ -111,8 +116,7 @@ exports.handler = async function (event) {
     });
   }
 
-  // 2. Evaluamos el cupón
- // 2. Evaluamos el cupón conectado a Supabase
+  // 2. Evaluamos el cupón conectado a Supabase
   if (body.coupon) {
     const { data: cuponData, error } = await supabase
       .from("cupones")
@@ -120,9 +124,7 @@ exports.handler = async function (event) {
       .eq("codigo", body.coupon.toUpperCase().trim())
       .single();
 
-    // Verificamos que exista y no esté usado
     if (cuponData && !cuponData.usado) {
-      // Validamos si es un cupón amarrado a un email
       const emailValido = !cuponData.email || (body.buyer?.email && cuponData.email.toLowerCase() === body.buyer.email.toLowerCase());
       
       if (emailValido) {
@@ -135,9 +137,6 @@ exports.handler = async function (event) {
           unit_price: -descuentoReal,
           currency_id: "MXN"
         });
-
-        // Opcional: Marcar el cupón como usado en la base de datos automáticamente
-        // await supabase.from('cupones').update({ usado: true }).eq('codigo', cuponData.codigo);
       }
     }
   }
@@ -158,87 +157,3 @@ exports.handler = async function (event) {
       currency_id: "MXN"
     });
   }
-
-  // 4. Creamos el objeto de preferencia con tus mismas URLs
-  const preference = {
-    items: mpItems,
-    payer: {
-      name: body.buyer?.name || "",
-      surname: body.buyer?.lastname || "",
-      email: body.buyer?.email || "cliente@heroddecants.com",
-      phone: { number: body.buyer?.phone || "" }
-    },
-    shipments: body.shipments || {},
-    back_urls: {
-      success: "https://heroddecants.com?pago=exitoso",
-      failure: "https://heroddecants.com?pago=fallido",
-      pending: "https://heroddecants.com?pago=pendiente"
-    },
-    auto_return: "approved",
-    statement_descriptor: "HEROD DECANTS",
-    payment_methods: {
-      excluded_payment_types: []
-    }
-  };
-
-  // Opcional: Si eligieron OXXO, ocultar tarjetas de crédito y viceversa
-  if (body.method === "oxxo") {
-    preference.payment_methods.installments = 1;
-    preference.payment_methods.excluded_payment_types = [
-      { id: "credit_card" }, { id: "debit_card" }
-    ];
-  } else if (body.method === "card") {
-     preference.payment_methods.excluded_payment_types = [
-       { id: "ticket" }, { id: "atm" }
-     ];
-  }
-
-  // 5. Enviamos la petición a MercadoPago (Tu mismo código intacto)
-  return new Promise((resolve) => {
-    const data = JSON.stringify(preference);
-    const options = {
-      hostname: "api.mercadopago.com",
-      path: "/checkout/preferences",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${ACCESS_TOKEN}`,
-        "Content-Length": Buffer.byteLength(data)
-      }
-    };
-
-    const req = https.request(options, (res) => {
-      let responseBody = "";
-      res.on("data", (chunk) => responseBody += chunk);
-      res.on("end", () => {
-        try {
-          const result = JSON.parse(responseBody);
-          if (result.init_point) {
-            resolve({
-              statusCode: 200,
-              headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({ init_point: result.init_point })
-            });
-          } else {
-            resolve({
-              statusCode: 500,
-              body: JSON.stringify({ error: "No se pudo crear la preferencia", detail: result })
-            });
-          }
-        } catch(e) {
-          resolve({ statusCode: 500, body: JSON.stringify({ error: "Error parsing response" }) });
-        }
-      });
-    });
-
-    req.on("error", (e) => {
-      resolve({ statusCode: 500, body: JSON.stringify({ error: e.message }) });
-    });
-
-    req.write(data);
-    req.end();
-  });
-};
