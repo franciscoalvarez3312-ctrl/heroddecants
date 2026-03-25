@@ -440,30 +440,76 @@ if (cleanPhone.length < 10) { alert("Teléfono inválido (mínimo 10 dígitos)."
   }
 
   // ── PAYPAL ───────────────────────────────────────────
-  function initPayPal() {
+ function initPayPal() {
     if (typeof paypal === "undefined") return;
+
+    // --- CONFIGURACIÓN EMAILJS ---
+    const EJS_SERVICE_ID = "service_f11f6dc";
+    const EJS_PUBLIC_KEY = "HUJty9ND4ZeSJB1UR";
+    const EJS_ORDER_TEMPLATE_ID = "template_bn9a0ps";
+
+    // --- FUNCIÓN PARA EL AVISO DE VENTA ---
+    async function avisarAdminNuevaVenta(datosVenta) {
+        const listaPerfumes = datosVenta.items.map(item => 
+            `<li>${item.qty}x ${item.brand} - ${item.name} (${item.size}ml)</li>`
+        ).join("");
+
+        const contenidoParaCorreo = `
+            <div style="font-family: sans-serif; border: 1px solid #eee; padding: 20px;">
+                <h2 style="color: #2c3e50;">¡Nueva Venta Realizada! 🎉</h2>
+                <p><strong>Cliente:</strong> ${datosVenta.buyer.name} ${datosVenta.buyer.lastname}</p>
+                <p><strong>WhatsApp:</strong> ${datosVenta.buyer.phone}</p>
+                <p><strong>Dirección:</strong> ${datosVenta.buyer.street}, ${datosVenta.buyer.colonia}, ${datosVenta.buyer.city}</p>
+                <hr>
+                <ul>${listaPerfumes}</ul>
+                <hr>
+                <p style="font-size: 18px;"><strong>Total Pagado: $${datosVenta.total} MXN</strong></p>
+            </div>
+        `;
+
+        try {
+            emailjs.init(EJS_PUBLIC_KEY);
+            await emailjs.send(EJS_SERVICE_ID, EJS_ORDER_TEMPLATE_ID, {
+                email_subject: `📦 NUEVO PEDIDO: ${datosVenta.buyer.name}`,
+                to_email: "heroddecants@gmail.com",
+                html_content: contenidoParaCorreo
+            });
+            console.log("✅ Aviso enviado al admin");
+        } catch (error) {
+            console.error("❌ Error EmailJS:", error);
+        }
+    }
+
+    // --- BOTÓN DE PAYPAL ---
     paypal.Buttons({
-      style: { layout: "horizontal", color: "gold", shape: "rect", label: "paypal", height: 45 },
-      createOrder: async (data, actions) => {
-        const fields = getFormData(); if (!fields) return;
-        const payload = getOrderPayload(fields);
-        const totalMXN = payload.total;
-        return actions.order.create({
-          purchase_units: [{
-            amount: { value: totalMXN.toFixed(2), currency_code: "MXN" },
-            description: "Herod Decants - Pedido"
-          }]
-        });
-      },
-      onApprove: async (data, actions) => {
-        const order = await actions.order.capture();
-        localStorage.removeItem("herod_cart");
-        alert("✅ Pago con PayPal exitoso. ¡Gracias por tu compra!");
-        window.location.href = "index.html";
-      },
-      onError: err => { alert("Error con PayPal. Intenta con otro método."); }
-    }).render("#paypalContainer");
-  }
+        style: { layout: "horizontal", color: "gold", shape: "rect", label: "paypal", height: 45 },
+        createOrder: async (data, actions) => {
+            const fields = getFormData();
+            if (!fields) return;
+            const payload = getOrderPayload(fields);
+            const totalMXN = payload.total;
+
+            return actions.order.create({
+                purchase_units: [{
+                    amount: { value: totalMXN.toFixed(2), currency_code: "MXN" },
+                    description: "Herod Decants - Pedido"
+                }]
+            });
+        },
+        onApprove: async (data, actions) => {
+            const order = await actions.order.capture();
+            const fields = getFormData();
+            const payload = getOrderPayload(fields);
+
+            // Enviamos el correo con el diseño azul
+            await avisarAdminNuevaVenta(payload);
+
+            localStorage.removeItem("herod_cart");
+            alert("✅ ¡Pago con PayPal exitoso! Gracias por tu compra.");
+            window.location.href = "index.html";
+        }
+    }).render('#paypal-button-container');
+}    
 
   init();
 </script>
