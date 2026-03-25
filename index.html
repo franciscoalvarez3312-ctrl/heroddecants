@@ -3133,9 +3133,9 @@ function renderAdminSettings(body) {
 // 3. Crea un Email Template con las variables: {{to_name}}, {{to_email}}, {{discount_code}}
 // 4. Copia tu Public Key de Account > API Keys
 // Reemplaza los 3 valores de abajo:
-const EJS_SERVICE_ID  = "TU_SERVICE_ID";   // ej. "service_abc123"
-const EJS_TEMPLATE_ID = "TU_TEMPLATE_ID";  // ej. "template_xyz456"
-const EJS_PUBLIC_KEY  = "TU_PUBLIC_KEY";   // ej. "aBcDeFgHiJkLmN"
+const EJS_SERVICE_ID  = "service_f11f6dc";   // ej. "service_abc123"
+const EJS_TEMPLATE_ID = "template_bn9a0ps";  // ej. "template_xyz456"
+const EJS_PUBLIC_KEY  = "HUJtY9ND4ZeSJB1UR";   // ej. "aBcDeFgHiJkLmN"
 const DISCOUNT_CODE   = "HEROD10";
 
 // Show register modal after 8 seconds if user hasn't registered
@@ -3180,11 +3180,11 @@ document.getElementById("regSubmit").addEventListener("click", async () => {
     if (EJS_PUBLIC_KEY !== "TU_PUBLIC_KEY") {
       // Real EmailJS send
       emailjs.init(EJS_PUBLIC_KEY);
-      await emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
+await emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
         to_name: name,
         to_email: email,
-        discount_code: DISCOUNT_CODE,
-        store_name: "Herod Decants"
+        asunto: "¡Tu código de 10% de descuento! 🎉",
+        mensaje_principal: "¡Gracias por unirte! Tu código para tu primera compra es: HEROD10. Úsalo en tu carrito antes de pagar."
       });
     }
     // Mark as registered
@@ -3407,6 +3407,35 @@ document.getElementById("mpBtn").addEventListener("click", async () => {
   }
 });
 
+// --- DETECTOR DE REGRESO DE MERCADOPAGO ---
+async function revisarPagoMercadoPago() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status'); 
+
+    if (status === 'approved' || status === 'pending') {
+        const cart = JSON.parse(localStorage.getItem("herod_cart")) || [];
+        if (cart.length === 0) return; 
+
+        try {
+            // Usamos tus IDs que ya tienes definidos arriba en el archivo
+            await emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
+                to_name: "Admin Herod",
+                to_email: "heroddecants@gmail.com",
+                asunto: "✅ NUEVA VENTA MERCADOPAGO / OXXO",
+                mensaje_principal: "¡Felicidades! Se ha confirmado un pago de MercadoPago. Revisa tu panel para detalles de envío."
+            });
+            
+            localStorage.removeItem("herod_cart");
+            alert("¡Pago recibido con éxito! Pronto procesaremos tu envío.");
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } catch (error) {
+            console.error("Error al avisar de venta MP:", error);
+        }
+    }
+}
+
+// EJECUTAMOS LA REVISIÓN AL CARGAR LA PÁGINA
+revisarPagoMercadoPago();
 }); // end DOMContentLoaded
 </script>
 
@@ -3428,7 +3457,7 @@ document.getElementById("mpBtn").addEventListener("click", async () => {
 </div>
 
 <!-- EmailJS SDK -->
-<script src="./index_files/email.min.js.descarga"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
 <!-- REGISTER MODAL -->
 <div class="register-modal-overlay" id="registerModal" bis_skin_checked="1">
